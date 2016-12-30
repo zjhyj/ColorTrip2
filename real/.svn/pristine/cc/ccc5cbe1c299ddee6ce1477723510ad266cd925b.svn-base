@@ -1,0 +1,267 @@
+package com.whut.myMap;
+
+import java.sql.Date;
+import java.util.UUID;
+
+import com.google.gson.Gson;
+import com.whut.myMap.R;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.reds;
+import com.whut.myMap.serverce.Redservice;
+import com.whut.myMap.serverce.trackservice;
+import com.whut.net.addredsnet;
+import com.whut.net.addtracknet;
+
+import android.R.integer;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.text.TextPaint;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class WriteDongtai extends Activity {
+	private Button location;
+	private Button route;
+	private EditText content;
+	private TextView title;
+	private TextView date;
+	private ImageView imageView;
+	private LinearLayout map;
+	private static int RorP = 0;
+	private trackbean testRoute = new trackbean();
+	private redsbean testPoint = new redsbean();
+	protected final int SHOW_RESPONSE = 0;
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			Log.i("zai", "enene1");
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if (msg.obj != null) {
+					Log.i("zai", "enene");
+					if (Integer.parseInt((String) msg.obj) == 1) {
+						if(RorP==1){
+							Redservice service=new Redservice(getApplication());
+							service.deletereds(getApplication(),testPoint);
+							testPoint=null;
+						}else if(RorP==2){
+							 trackservice service=new trackservice(getApplication());
+							service.deletetrack(getApplication(),testRoute.getTrack().getTrack_id());
+						     testRoute=null;
+						}
+						RorP=0;
+						Log.i("zai", "enene3");
+						Toast.makeText(getApplication(), "分享成功!", 1).show();
+					} else {
+						Log.i("zai", "enene4");
+						Toast.makeText(getApplication(), "网络异常，请检查网络！", 1).show();
+					}
+				}
+			}
+		}
+	};
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_write_dongtai);
+		location = (Button) findViewById(R.id.fwd_btn_location);
+		route = (Button) findViewById(R.id.fwd_btn_route);
+		content = (EditText) findViewById(R.id.fwd_content);
+		title = (TextView) findViewById(R.id.tvTitle);
+		date = (TextView) findViewById(R.id.tvDate);
+		imageView = (ImageView) findViewById(R.id.img);
+		map = (LinearLayout) findViewById(R.id.list_map);
+		map.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Toast.makeText(getApplication(), "?!", 0).show();
+			}
+		});
+		location.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(WriteDongtai.this, ChoosePoint.class);
+				startActivityForResult(intent, 1);
+			}
+		});
+		route.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(WriteDongtai.this, ChooseRoute.class);
+				startActivityForResult(intent, 2);
+			}
+		});
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != Activity.RESULT_OK) {// result is not correct
+			return;
+		} else {
+			switch (requestCode) {
+			case 1:
+				testPoint = (redsbean) data.getSerializableExtra("POINT");
+				date.setText(testPoint.getReds().getDate().toString());
+				title.setText(testPoint.getReds().getWords());
+                content.setText(testPoint.getReds().getWords());
+				try {
+					imageView.setImageURI(Uri.parse(testPoint.getListmap().get(0).getImgurl()));
+				} catch (Exception e) {
+					imageView.setImageResource(R.drawable.loadpic);
+				}
+				RorP = 1;
+				break;
+			case 2:
+				testRoute = (trackbean) data.getSerializableExtra("ROUTE");
+				date.setText(testRoute.getTrack().getDate());
+				title.setText(testRoute.getTrack().getWords());
+				content.setText(testRoute.getTrack().getWords());
+				try {
+					imageView.setImageURI(Uri.parse(testRoute.getRedsbean().get(0).getListmap().get(0).getImgurl()));
+				} catch (Exception e) {
+					imageView.setImageResource(R.drawable.loadpic);
+				}
+				RorP = 2;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.comment_menu, menu);
+		ActionBar mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.write_dongtai);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		case R.id.cancel_post:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		case R.id.post:
+			if (RorP == 1) {
+				testPoint.getReds().setWords(content.getText().toString());
+				post(testPoint);
+				finish();
+				return true;
+			} else {
+				testRoute.getTrack().setWords(content.getText().toString());
+				post(testRoute);
+				finish();
+				return true;
+			}
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+	}
+
+	
+	/**
+	 * rorp=1 地点 testPoint
+	 * 
+	 * rorp=2 路径 testRoute
+	 * 
+	 * @param testPoint
+	 * 
+	 * 
+	 */
+	private void post(final Object textObject) {
+		switch (RorP) {
+		case 1:
+			new Thread(new Runnable() {
+				String result;
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						addredsnet addredsnet = new addredsnet();
+						String ret = addredsnet.addreds((redsbean) textObject);
+						if (ret != null && ret.length() > 0) {
+							result = ret;
+						} else {
+							result = "2";
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+						result = "2";
+					} finally {
+						Message message = new Message();
+						message.what = SHOW_RESPONSE;
+						message.obj = result.toString();
+						handler.sendMessage(message);
+					}
+				}
+			}).start();
+			break;
+		case 2:
+			new Thread(new Runnable() {
+				String result;
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						addtracknet addredsnet = new addtracknet();
+						String ret = addredsnet.addtrackbean((trackbean) textObject, getApplication());
+						if (ret != null && ret.length() > 0) {
+							result = ret;
+						} else {
+							result = "2";
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+						result = "2";
+					} finally {
+						Message message = new Message();
+						message.what = SHOW_RESPONSE;
+						message.obj = result.toString();
+						handler.sendMessage(message);
+					}
+				}
+			}).start();
+			break;
+		default:
+			break;
+		}
+
+	}
+}

@@ -1,0 +1,186 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.getredsbytimenet;
+import com.whut.net.returnlistadviser;
+import com.whut.net.updateheadnet;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RatingBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class AdviserComment extends Activity{
+	private ActionBar mActionBar;
+	private static String jsonstring;
+	 private final int SHOW_RESPONSE=0;
+	 private final int SHOW_RESPONSE_FIRST=1;
+	private Button cancel;
+	private Button change;
+	private EditText word;
+	private RatingBar ratingBar;
+	private int rate;
+	private  int adviser_id;
+	private Handler handler=new Handler(){
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if(Integer.parseInt((String) msg.obj)==1){
+					showPre();
+				}else{					
+						Toast.makeText(AdviserComment.this, "请检查您的网络！", 0).show();	
+					}
+				break;
+			case SHOW_RESPONSE_FIRST:
+				if(Integer.parseInt((String) msg.obj)==1){
+					Log.i("zai", "enene");
+						showPre();
+				}else{					
+					Toast.makeText(AdviserComment.this, "请检查您的网络！", 0).show();	
+					}
+				break;
+		}
+		}
+	};
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.adviser_comment);
+		Intent intent=getIntent();
+		adviser_id=intent.getIntExtra("adviser", 0);
+		cancel=(Button) findViewById(R.id.serve);
+		change=(Button) findViewById(R.id.change);
+		word=(EditText) findViewById(R.id.edittext);
+		ratingBar=(RatingBar) findViewById(R.id.room_ratingbar);
+		cancel.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				update();
+			}
+		});
+		change.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+					change();
+			}
+		});
+	}
+	protected void update() {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			String result;
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					Map<String,String> param=new HashMap<String, String>();
+            		param.put("adviserid", adviser_id+"");
+		           String  jsonstring1=returnlistadviser.updateAdviser(param);
+		            if(jsonstring1!=null&&jsonstring1.length()>0){
+		            	jsonstring=jsonstring1;	
+		            	result="1";
+		            }else{
+		            	result="0";
+		            }
+					} catch (Exception e) {
+					// TODO: handle exception
+					result="0";
+				}finally{
+			Log.i("result",result.toString());
+			Message message=new Message();
+			message.what=SHOW_RESPONSE;
+			message.obj=result.toString();		
+			handler.sendMessage(message);	
+				}				
+			}
+		}).start();	 
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.adviser_comment);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+	}
+	private void change() {
+		new Thread(new Runnable() {
+			String result;
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					Map<String,String> param=new HashMap<String, String>();
+            		param.put("word", word.getText().toString());
+            		param.put("adviserid", adviser_id+"");
+            		param.put("rate", ratingBar.getRating()+"");
+		           String  jsonstring1=returnlistadviser.deleteAdviser(param);
+		            if(jsonstring1!=null&&jsonstring1.length()>0){
+		            	jsonstring=jsonstring1;	
+		            	result="1";
+		            }else{
+		            	result="0";
+		            }
+					} catch (Exception e) {
+					// TODO: handle exception
+					result="0";
+				}finally{
+			Log.i("result",result.toString());
+			Message message=new Message();
+			message.what=SHOW_RESPONSE_FIRST;
+			message.obj=result.toString();		
+			handler.sendMessage(message);	
+				}				
+			}
+		}).start();	 
+	}
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("按下了back键   onBackPressed()");
+		showPre();
+	}
+	public void showPre() {
+		// TODO Auto-generated method stub
+		finish();
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			showPre();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+}

@@ -1,0 +1,468 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.adapter.CommentListViewAdapter_speak;
+import com.whut.myMap.adapter.ScollListView;
+import com.whut.myMap.adapter.SpeakGridView;
+import com.whut.myMap.adapter.SpeakGridViewAdapter;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.domain.dongtaipointbean;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.serverce.findshoucang;
+import com.whut.myMap.serverce.findzan;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.favornet;
+import com.whut.net.getHuifuNet;
+import com.whut.net.getOneSpeakPointnet;
+import com.whut.net.praisenet;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+public class Speak_MainNET_ST extends Activity {
+	private static final int GONE = 8;
+	private static final int VISIBLE = 0;
+	private ScollListView mListView;
+	List<comment_message> list  = new ArrayList<comment_message>();
+	ArrayList<String> transPicture = new ArrayList<String>();
+	ArrayList<String> imageUrls = new ArrayList<String>();
+	private dongtaipointbean dongtaibean;
+	private ImageView imageHead;
+	private TextView name;
+	private TextView date;
+	private TextView content;
+	private ImageView comment;
+	private ImageView praise;
+	private ImageView favour;
+	private TextView comment_tv;
+	private TextView praise_tv;
+	private TextView favour_tv;
+	private Button map_show;
+	private static boolean iszan;
+	private static boolean isshoucang;
+	private static int zaned=2;
+	private SpeakGridView speakGridView;
+	CommentListViewAdapter_speak myAdapter;
+	SpeakGridViewAdapter speakGridViewAdapter;
+	private Context mContext;
+	private int Dongtai_User_id;
+	private int source_id;
+	private static String jsonstring;
+	private static String dongtaistring;
+	private final int SHOW_RESPONSE_PRAISE = 0;
+	private final int SHOW_RESPONSE_DONGTAI = 1;
+	private final int SHOW_RESPONSE_SHOUCANG=2;
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOW_RESPONSE_PRAISE:
+				Log.i("zai", "enene2");
+				if (msg.obj != null) {
+					Log.i("zai", "enene");
+					if (Integer.parseInt((String) msg.obj) == 1) {
+						if(iszan){
+							new findzan(getApplicationContext()).deletezaned(dongtaibean.getReds().getReds().getReds_id(),dongtaibean.getReds().getReds().getType(),getApplicationContext());
+						    showzan(false);
+						    zaned=0;
+						}else{
+							new findzan(getApplicationContext()).addzaned(dongtaibean.getReds().getReds().getReds_id(),dongtaibean.getReds().getReds().getType(),getApplicationContext());
+						    showzan(true);
+						    zaned=1;
+						}
+					} else {
+						Toast.makeText(getApplication(), "网络异常，请检查网络！！", 0).show();
+						return;
+					}
+				}
+				break;
+			case SHOW_RESPONSE_DONGTAI:
+				Log.i("zai", "enene2");
+				
+				if (Integer.parseInt((String) msg.obj) == 1) {
+					Log.i("zai", "enene");
+					Log.i("zai", "enene3");
+					gsonutil gson = new gsonutil();
+					Log.i("json", dongtaistring);
+					System.out.println(dongtaistring);
+					try {
+						dongtaibean = (dongtaipointbean) gsonutil.getobject(dongtaistring, dongtaipointbean.class);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+						dongtaibean=new dongtaipointbean();
+					}
+                   
+					Dongtai_User_id = dongtaibean.getReds().getReds().getUser_id();
+					
+					
+//					myAdapter.notifyDataSetChanged();
+					showzan(new findzan(getApplicationContext()).findzaned(dongtaibean.getReds().getReds().getReds_id(), dongtaibean.getReds().getReds().getType(), getApplicationContext()));
+					showshoucang(new findshoucang(getApplicationContext()).findshoucanged(dongtaibean.getReds().getReds().getReds_id(), dongtaibean.getReds().getReds().getType(), getApplicationContext()));
+					try {
+						DisplayImageOptions options = new DisplayImageOptions.Builder()//
+								.showImageOnLoading(R.drawable.ic_launcher) // 加载中显示的默认图片
+								.showImageOnFail(R.drawable.ic_launcher) // 设置加载失败的默认图片
+								.cacheInMemory(true) // 内存缓存
+								.cacheOnDisk(true) // sdcard缓存
+								.bitmapConfig(Config.RGB_565)// 设置最低配置
+								.build();//
+						ImageLoader.getInstance().displayImage( dongtaibean.getReds().getUrl(), imageHead, options);
+					} catch (Exception e) {
+						imageHead.setImageResource(R.drawable.default_head);
+					}
+
+					name.setText(dongtaibean.getReds().getUsername());
+					date.setText(dongtaibean.getReds().getReds().getDate().substring(0, 16));
+					content.setText(dongtaibean.getReds().getReds().getWords());
+
+					if (dongtaibean.getReds().getListmap()==null||dongtaibean.getReds().getListmap().size()==0) {
+						speakGridView.setVisibility(GONE);
+					} else {
+						speakGridView.setVisibility(VISIBLE);
+
+						for (int i = 0; i < dongtaibean.getReds().getListmap().size(); i++) {
+							transPicture.add(dongtaibean.getReds().getListmap().get(i).getImgurl());
+							Log.e("imageurl", dongtaibean.getReds().getListmap().get(0).getImgurl());
+						}
+						for (int i = 0; i < transPicture.size(); i++) {
+							String image=transPicture.get(i);
+							int index=image.lastIndexOf("_");
+							imageUrls.add(image.substring(0, index)+".jpg");	
+						}
+						speakGridViewAdapter.notifyDataSetChanged(); 
+					}
+					list.clear();
+				      list.addAll(dongtaibean.getHuifu());
+				      myAdapter = new CommentListViewAdapter_speak(list, Dongtai_User_id,
+								getApplication()); 
+				      mListView.setAdapter(myAdapter);
+				} else {
+					Toast.makeText(getApplication(), "网络异常，请检查网络！！", 0).show();
+					return;
+				}
+				break;
+			case SHOW_RESPONSE_SHOUCANG:
+				Log.i("zai", "enene2");
+				if(msg.obj!=null){
+					Log.i("zai", "enene");
+					if(Integer.parseInt((String) msg.obj)==1){
+						if(isshoucang){
+							new findshoucang(getApplicationContext()).deleteshoucanged(dongtaibean.getReds().getReds().getReds_id(),dongtaibean.getReds().getReds().getType(),getApplicationContext());
+						    showshoucang(false);
+						    zaned=0;
+						}else{
+							new findshoucang(getApplicationContext()).addshoucanged(dongtaibean.getReds().getReds().getReds_id(),dongtaibean.getReds().getReds().getType(),getApplicationContext());
+						    showshoucang(true);
+						    zaned=1;
+						}
+					}else if (Integer.parseInt((String) msg.obj)==2) {
+						return;
+					}
+					else{
+						Toast.makeText(getApplication(), "网络异常，请检查网络！！", 0).show();
+						return;
+					}
+				}
+				break;
+			}
+		}
+	};
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.speak_item_main);
+		Intent intent = getIntent();
+		source_id = intent.getIntExtra("source_id", 0);
+		mContext = this;
+		
+		mListView = (ScollListView) findViewById(R.id.sim_comment);
+			
+		// 把view层对象ListView和控制器BaseAdapter关联起来
+		imageHead = (ImageView) findViewById(R.id.imgHead);
+		name = (TextView) findViewById(R.id.tvName);
+		date = (TextView) findViewById(R.id.tvDate);
+		content = (TextView) findViewById(R.id.tvContent);
+		map_show = (Button) findViewById(R.id.map_show);
+
+		comment = (ImageView) findViewById(R.id.comment);
+		praise = (ImageView) findViewById(R.id.praise);
+		favour = (ImageView) findViewById(R.id.favour);
+		comment_tv = (TextView) findViewById(R.id.comment_tv);
+		praise_tv = (TextView) findViewById(R.id.praise_tv);
+		favour_tv = (TextView) findViewById(R.id.favour_tv);
+		speakGridView = (SpeakGridView) findViewById(R.id.tvGridview);
+		
+		speakGridViewAdapter = new SpeakGridViewAdapter(this,imageUrls, transPicture);
+		speakGridView.setAdapter(speakGridViewAdapter);
+		getSpeak();
+		 mListView.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					Intent intent = new Intent(Speak_MainNET_ST.this, WriteComment.class);
+					comment_message cMessage=new comment_message();
+					Bundle bundle=new Bundle();
+					cMessage.setType(dongtaibean.getReds().getReds().getType());
+					cMessage.setSource_id(dongtaibean.getReds().getReds().getReds_id());
+					cMessage.setCeduserid(list.get(position).getHuifu_user_id());
+					cMessage.setCedusername(list.get(position).getHuifu_user_name());
+					cMessage.setHuifu_id(list.get(position).getHuifu_id());
+					intent.putExtra("tp", 0);
+					bundle.putSerializable("comment_user_who", cMessage);
+					intent.putExtras(bundle);
+					startActivityForResult(intent, 0);
+				}
+			});  
+		map_show.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(Speak_MainNET_ST.this, RedslocationNET.class);
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("speak_item", dongtaibean.getReds());
+				intent.putExtras(bundle);
+				startActivity(intent);
+				Log.e("imageurl", dongtaibean.getReds().getListmap().get(0).getImgurl());
+			}
+		});
+		
+		
+		comment.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(Speak_MainNET_ST.this, WriteComment.class);
+				comment_message cMessage=new comment_message();
+				cMessage.setCeduserid(dongtaibean.getReds().getReds().getUser_id());
+				cMessage.setType(dongtaibean.getReds().getReds().getType());
+				cMessage.setSource_id(dongtaibean.getReds().getReds().getReds_id());
+//				cMessage.setCedusername();
+//				cMessage.setHuifu_id(list.get(position).getHuifu_id()0);
+				Bundle bundle=new Bundle();
+				bundle.putSerializable("comment_user_who",cMessage);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, 0);
+			}
+		});
+
+		praise.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new Thread(new Runnable() {
+					String result;
+					int isjia;
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try {
+
+							Map<String, String> param = new HashMap<String, String>();
+							System.out.println(source_id);
+							System.out.println(dongtaibean.getReds().getReds().getType());
+							if(iszan) isjia=0;
+                            else isjia=1;
+							param.put("type", dongtaibean.getReds().getReds().getType() + "");
+							param.put("sourceid", source_id + "");
+							 param.put("isjia", isjia+"");
+							result = praisenet.praise(param);
+
+						} catch (Exception e) {
+							// TODO: handle exception
+							result = "0";
+						} finally {
+							Log.i("result", result.toString());
+							Message message = new Message();
+							message.what = SHOW_RESPONSE_PRAISE;
+							if(result!=null||result!=""){
+								message.obj=result.toString();
+								}else {
+									message.obj="2";
+								}
+							handler.sendMessage(message);
+						}
+					}
+				}).start();
+			}
+		});
+		
+		favour.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new Thread(new Runnable() {	
+					String result;
+					int isjia;
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try {
+							Map<String, String> param=new HashMap<String, String>();
+							 if(isshoucang) isjia=0;
+	                            else isjia=1;
+							param.put("isjia", isjia+"");
+                            param.put("type", dongtaibean.getReds().getReds().getType()+"");
+                            param.put("sourceid", dongtaibean.getReds().getReds().getReds_id()+"");
+				            result=favornet.favor(param); 
+							} catch (Exception e) {
+							// TODO: handle exception
+							result="0";
+						}finally{
+					Message message=new Message();
+					message.what=SHOW_RESPONSE_SHOUCANG;
+					if(result!=null||result!=""){
+						message.obj=result.toString();
+						}else {
+							message.obj="2";
+						}		
+					handler.sendMessage(message);	
+						}				
+					}
+				}).start();	
+			}
+		});
+	}
+
+	public void showzan(boolean bool) {
+		if(bool){
+			praise.setImageBitmap(BitmapFactory
+					.decodeResource(getResources(),
+							R.drawable.good_clicked));
+			praise_tv.setText("已赞");
+			iszan=true;
+		}else{
+			praise.setImageBitmap(BitmapFactory
+					.decodeResource(getResources(),
+							R.drawable.good_main));
+			praise_tv.setText("赞");
+			iszan=false;
+		}
+	}
+	public void showshoucang(boolean bool) {
+		if(bool){
+					favour.setImageBitmap(BitmapFactory
+							.decodeResource(getResources(),
+									R.drawable.favor_clicked));
+					favour_tv.setText("已收藏");
+			isshoucang=true;
+		}else{
+			favour.setImageBitmap(BitmapFactory
+					.decodeResource(getResources(),
+							R.drawable.favourite_main));
+			favour_tv.setText("收藏");
+			isshoucang=false;
+		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		ActionBar mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.speak_main);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+
+	private void getSpeak() {
+		new Thread(new Runnable() {
+			private String result;
+			@Override
+			public void run() {
+				try {
+					// TODO Auto-generated method stub
+					Map<String, String> param = new HashMap<String, String>();
+					param.put("source_id", source_id + "");
+					param.put("type", 0 + "");
+					getOneSpeakPointnet gHuifuNet = new getOneSpeakPointnet();
+					String jsonstring1 = gHuifuNet.getOneSpeak(param);
+					if (jsonstring1 != null && jsonstring1.length() > 0) {
+						dongtaistring = jsonstring1;
+						System.out.print(dongtaistring);
+						result = "1";
+					} else {
+						result = "0";
+						return;
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					result = "2";
+				} finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = SHOW_RESPONSE_DONGTAI;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		if (resultCode != Activity.RESULT_OK) {// result is not correct
+			return;
+		} else {
+			if (requestCode == 0) {
+				Bundle bundle = data.getExtras();
+				comment_message cMessage = (comment_message) bundle.getSerializable("comment");
+				list.add(0, cMessage);
+				myAdapter.notifyDataSetChanged();
+			}
+
+		}
+	}
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		Intent intent=new Intent();
+		intent.putExtra("zaned", zaned);
+		setResult(RESULT_OK);
+	}
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("按下了back键   onBackPressed()");
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+}

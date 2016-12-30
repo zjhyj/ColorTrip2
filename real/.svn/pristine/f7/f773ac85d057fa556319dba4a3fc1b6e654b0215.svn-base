@@ -1,0 +1,70 @@
+package com.whut.myMap;
+
+import java.util.zip.Inflater;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+public class AboutThis extends Activity {
+	private TextView tv_version;
+	private ActionBar mActionBar;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.about_this);
+		tv_version = (TextView) findViewById(R.id.at_tv_versionname);
+		tv_version.setText("版本号:" + getVersionName());
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.about_this);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+
+	}
+	private String getVersionName() {
+		PackageManager pManager = getPackageManager();
+		try {
+			PackageInfo info = pManager.getPackageInfo(getPackageName(), 0);
+			return info.versionName;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return " ";
+		}
+	}
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("按下了back键   onBackPressed()");
+		showPre();
+	}
+	public void showPre() {
+		// TODO Auto-generated method stub
+		finish();
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+}

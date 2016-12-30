@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.whut.myMap.Mymap" >
+  
+    
+<com.baidu.mapapi.map.MapView
+    android:id="@+id/bmapView"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:clickable="true" >
+</com.baidu.mapapi.map.MapView>
+<ImageView 
+    android:id="@+id/show"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="30dp"
+    android:layout_marginRight="30dp"
+    android:src="@drawable/earth"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"/>
+  <RelativeLayout
+        android:id="@+id/mLyout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+    </RelativeLayout>
+</RelativeLayout>

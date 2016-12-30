@@ -1,0 +1,60 @@
+package com.whut.myMap.entites;
+
+import java.io.Serializable;
+
+import com.google.android.support.v4.os.ParcelableCompat;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class jifenhistory  implements Serializable{
+	private int goods_id;
+	private int user_id;
+	private int buy_id;
+	private int value;
+	private int cost;
+	public int getGoods_id() {
+		return goods_id;
+	}
+	public void setGoods_id(int goods_id) {
+		this.goods_id = goods_id;
+	}
+	public int getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
+	}
+	public int getBuy_id() {
+		return buy_id;
+	}
+	public void setBuy_id(int buy_id) {
+		this.buy_id = buy_id;
+	}
+	
+	public int getValue() {
+		return value;
+	}
+	public void setValue(int value) {
+		this.value = value;
+	}
+	public int getCost() {
+		return cost;
+	}
+	public void setCost(int cost) {
+		this.cost = cost;
+	}
+	public jifenhistory() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public jifenhistory(int goods_id, int user_id, int buy_id, int value, int cost) {
+		super();
+		this.goods_id = goods_id;
+		this.user_id = user_id;
+		this.buy_id = buy_id;
+		this.value = value;
+		this.cost = cost;
+	}
+	
+}

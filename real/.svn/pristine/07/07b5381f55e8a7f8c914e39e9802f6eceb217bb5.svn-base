@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/LightYello" >
+  <TextView 
+      android:layout_margin="5dp"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="顾问评分："
+      android:textSize="14sp"
+      android:textColor="@color/tab_normal_color"/>
+    <RatingBar
+        android:id="@+id/room_ratingbar"
+        style="@style/AdviserRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:numStars="5"
+        android:rating="1" >
+    </RatingBar>
+<TextView 
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+       android:layout_margin="5dp"
+      android:text="顾问评价"
+      android:textSize="14sp"
+      android:textColor="@color/tab_normal_color"/>
+ <ScrollView
+        android:id="@+id/ScrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="170dp" >
+
+        <TableRow
+            android:id="@+id/TableRowContent"
+            android:layout_width="fill_parent"
+            android:layout_height="250dp"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/edittext"
+                android:layout_width="fill_parent"
+                android:layout_height="160dp"
+                android:layout_span="500"
+                android:gravity="top"
+                android:hint="输入评价"
+                android:textSize="18sp" >
+            </EditText>
+        </TableRow>
+    </ScrollView>
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button 
+            android:id="@+id/serve"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="不想换了"
+            android:layout_marginLeft="30dp"
+            android:textColor="@color/white"
+            android:background="@drawable/register_btn"/>
+         <Button 
+            android:id="@+id/change"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="换一个顾问"
+             android:layout_marginRight="30dp"
+             android:layout_alignParentRight="true"
+               android:textColor="@color/white"
+            android:background="@drawable/exit_button"/>
+    </RelativeLayout>
+</LinearLayout>

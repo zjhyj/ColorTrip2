@@ -1,0 +1,107 @@
+package com.whut.myMap.adapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.handmark.pulltorefresh.library.R.string;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.ImagePagerActivity;
+import com.whut.myMap.R;
+import com.whut.myMap.Speak_Main;
+import com.whut.myMap.domain.speak;
+import com.whut.myMap.entites.net;
+import com.whut.myMap.utils.GridViewUtils;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+/**
+ * 五项 图片为被评者头像 tv为内容和时间，点击跳到评论项
+ * 
+ * @author xxr
+ *
+ */
+public class ListViewAdapter_speak_guide extends BaseAdapter {
+	private List<net> mList;
+	private Context mContext;
+
+	public ListViewAdapter_speak_guide(List<net> mList, Context mContext) {
+		super();
+		this.mList = mList;
+		this.mContext = mContext;
+	}
+	@Override
+	public int getCount() {
+		return this.mList.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return position;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+	// final ListViewItem item = getItem(position); 缺少item项？？
+	@Override
+	public View getView(final int position, View convertView, ViewGroup parent) {
+		final ViewHolder holder;
+		if (convertView == null) {
+			holder = new ViewHolder();
+			LayoutInflater mInflater = LayoutInflater.from(mContext);
+			convertView = mInflater.inflate(R.layout.dongtai_guide, null);
+			holder.ImageView = (ImageView) convertView
+					.findViewById(R.id.image);
+			holder.title = (TextView) convertView
+					.findViewById(R.id.text);
+			holder.like=(TextView) convertView.findViewById(R.id.zan);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		final net sp = this.mList.get(position);
+		if (this.mList != null) {
+		
+			if (holder.title != null) {
+				holder.title.setText(sp.getWord());
+			}
+			if (holder.like!=null) {
+				holder.like.setText(sp.getZan()+"");
+			}
+			DisplayImageOptions options = new DisplayImageOptions.Builder()//
+					.showImageOnLoading(R.drawable.loadpic) // 加载中显示的默认图片
+					.showImageOnFail(R.drawable.loadfailed) // 设置加载失败的默认图片
+					.cacheInMemory(true) // 内存缓存
+					.cacheOnDisk(true) // sdcard缓存
+					.bitmapConfig(Config.RGB_565)// 设置最低配置
+					.build();//
+			ImageLoader.getInstance().displayImage(sp.getImage(),
+					holder.ImageView, options);
+		}
+		return convertView;
+	}
+	public final class ViewHolder {
+		public ImageView ImageView;
+		public TextView title;
+		public TextView like;
+	}
+}

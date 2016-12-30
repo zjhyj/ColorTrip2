@@ -1,0 +1,78 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+public class jifenshop implements Serializable {
+	private int goods_id;
+	private int value;
+	private int cost;
+     private int advertisement;
+     private int intro;
+     private String city;
+	public int getGoods_id() {
+		return goods_id;
+	}
+
+	public void setGoods_id(int goods_id) {
+		this.goods_id = goods_id;
+	}
+
+	public int getValue() {
+		return value;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+
+	public int getCost() {
+		return cost;
+	}
+
+	public void setCost(int cost) {
+		this.cost = cost;
+	}
+
+	
+	public int getAdvertisement() {
+		return advertisement;
+	}
+
+	public int getIntro() {
+		return intro;
+	}
+
+	public void setIntro(int intro) {
+		this.intro = intro;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public void setAdvertisement(int advertisement) {
+		this.advertisement = advertisement;
+	}
+
+	public jifenshop(int goods_id, int value, int cost, int advertisement, int intro, String city) {
+		super();
+		this.goods_id = goods_id;
+		this.value = value;
+		this.cost = cost;
+		this.advertisement = advertisement;
+		this.intro = intro;
+		this.city = city;
+	}
+
+	public jifenshop() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+	
+}

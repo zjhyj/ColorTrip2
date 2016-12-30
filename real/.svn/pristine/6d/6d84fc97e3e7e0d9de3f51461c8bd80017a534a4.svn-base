@@ -1,0 +1,109 @@
+package com.whut.myMap.serverce;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import android.R.integer;
+import android.app.Application;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.os.IBinder;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+
+import com.baidu.mapapi.model.LatLng;
+import com.whut.myMap.dao.lbsdao;
+import com.whut.myMap.dao.redsdao;
+import com.whut.myMap.dao.trackdao;
+import com.whut.myMap.db.sqliteopen;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.reds;
+import com.whut.myMap.entites.track;
+
+public class trackservice extends sqliteopen{
+	public trackservice(Context context) {
+		super(context);
+		// TODO Auto-generated constructor stub
+	}
+	public int addtrack(track track,Context context){
+		trackdao trackdao=new trackdao(context);
+		track.setUser_id(0);
+		trackdao.addtrack(track);
+		return trackdao.getmaxid();
+	}	
+	public void addlbs(List<lbs> lat2,Context context) {
+		lbsdao lbsdao=new lbsdao(context);
+		for(lbs lbs:lat2){
+			Log.i("lbsxy", lbs.getX()+" "+lbs.getY()+" "+lbs.getTrack_id()+" "+lbs.getLbs_id());
+		}
+	    lbsdao.insertlbs(lat2);	
+	}
+	public List<trackbean> gettrack(Context context){
+		try {
+		trackdao trackdao = new trackdao(context);
+		lbsdao lbsdao=new lbsdao(context);
+		Redservice redservice=new Redservice(context);
+		List<trackbean> listtrackbean=new ArrayList<trackbean>();
+		List<track> listtrack=trackdao.gettrack();
+		for(track track:listtrack){
+			Log.i("trackid", track.getTrack_id()+"");
+			List<redsbean> listredsbean=redservice.getredsbeanbytrackid(track.getTrack_id(), context);
+	        List<lbs> listlbs=lbsdao.getlbsbytrackid(track.getTrack_id());
+			listtrackbean.add(new trackbean(track,listredsbean,listlbs));
+		}
+		Log.i("cunzai", listtrackbean.size()+"");
+  		return listtrackbean;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			Log.i("bucunzai", 0+"");
+			return null;
+		}
+			}
+	public trackbean gettrack(Context context,int trackid){
+		try {
+		trackdao trackdao = new trackdao(context);
+		lbsdao lbsdao=new lbsdao(context);
+		Redservice redservice=new Redservice(context);
+//		List<trackbean> listtrackbean=new ArrayList<trackbean>();
+		track track=trackdao.gettrack(trackid);
+//		for(track track:listtrack){
+			List<redsbean> listredsbean=redservice.getredsbeanbytrackid(track.getTrack_id(), context);
+	        List<lbs> listlbs=lbsdao.getlbsbytrackid(track.getTrack_id());
+	        Log.i("id", track.getTrack_id()+"");
+	        return new trackbean(track,listredsbean,listlbs);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			Log.i("bucunzai", 0+"");
+			return null;
+		}
+			}
+	public void deletetrack(Context context) {
+		// TODO Auto-generated method stub
+		trackdao dao=new trackdao(context);
+		dao.deletetrack();	
+	}
+	public void deletemaxtrack(Context context){
+		trackdao dao=new trackdao(context);
+		dao.deletemaxtrack();		
+	}
+	public void updatetrackwords(String str, int trackid, Context context) {
+		// TODO Auto-generated method stub
+		trackdao dao=new trackdao(context);
+		dao.updatetrackwords(str,trackid,context);		
+	}
+	public void deletetrack(Context context, int track_id) {
+		// TODO Auto-generated method stub
+		trackdao dao=new trackdao(context);
+		dao.deletetrack(track_id);
+		
+	}
+}

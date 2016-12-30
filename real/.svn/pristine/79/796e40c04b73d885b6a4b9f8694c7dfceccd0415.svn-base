@@ -1,0 +1,17 @@
+package com.whut.net;
+
+import com.whut.myMap.entites.url;
+import com.whut.myMap.utils.httpclient;
+
+public class returnlistadviser {
+	public   String  returnadviser(){
+		try {
+			httpclient httpclient=new httpclient();
+			return httpclient.sendGet(new url().geturl()+"/servlet/returnlistadviser");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+}

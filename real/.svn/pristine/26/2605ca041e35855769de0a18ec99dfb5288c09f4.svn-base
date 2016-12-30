@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="10dp" >
+
+    <ImageView
+        android:id="@+id/imgHead"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="1dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_launcher" />
+
+    <LinearLayout
+        android:id="@+id/ci_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/imgHead"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:singleLine="true"
+            android:text="Tom"
+            android:textSize="16.0sp" />
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="0.2dip"
+            android:layout_marginTop="0dip"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="13:32"
+            android:textColor="#999999"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ci_ll"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:text="Hello world"
+        android:textSize="16sp" >
+    </TextView>
+
+    <LinearLayout
+        android:id="@+id/ll_before"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvContent"
+        android:layout_centerHorizontal="true"
+        android:background="#2ccccccc"
+        android:orientation="vertical"
+        android:paddingBottom="15dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="15dp" >
+
+        <TextView
+            android:id="@+id/beforename"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="赵军豪"
+            android:textSize="17sp"
+          >
+        </TextView>
+
+        <TextView
+            android:id="@+id/beforeword"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="Hello world"
+            android:textSize="16sp" >
+        </TextView>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/buttom"
+        android:layout_width="wrap_content"
+        android:layout_height="10dp"
+        android:layout_below="@id/ll_before" />
+
+    <View
+        android:id="@+id/buttom2"
+        android:layout_width="wrap_content"
+        android:layout_height="8dp"
+        android:layout_below="@id/buttom"
+        android:background="#eeeee0" />
+
+</RelativeLayout>

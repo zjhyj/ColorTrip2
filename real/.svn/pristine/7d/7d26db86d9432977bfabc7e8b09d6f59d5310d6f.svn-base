@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp" 
+    >
+    <View 
+        android:id="@+id/view"
+        android:layout_width="5dp"
+        android:layout_height="12dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="7dp"
+        android:background="#666666"/>
+    <TextView 
+        android:id="@+id/tv"
+        android:layout_toRightOf="@id/view"
+        android:text="勋章系统"
+        android:textSize="14sp"
+               android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"/>
+<TextView 
+    android:id="@+id/intro"
+    android:layout_below="@id/view"
+    android:text="满足条件后系统自动发放"
+    android:layout_marginTop="5dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:textColor="#666666"
+    android:layout_marginBottom="5dp"
+    android:textSize="12sp"/>
+</RelativeLayout>

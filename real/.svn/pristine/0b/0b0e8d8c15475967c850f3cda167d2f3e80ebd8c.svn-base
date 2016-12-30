@@ -1,0 +1,559 @@
+package com.whut.myMap;
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.tencent.connect.share.QQShare;
+import com.tencent.connect.share.QzoneShare;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.bean.SocializeEntity;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.listener.SocializeListeners.SnsPostListener;
+import com.umeng.socialize.sso.UMSsoHandler;
+import com.whut.myMap.adapter.CommentListViewAdapter_speak;
+import com.whut.myMap.adapter.Route_Main_ListviewAdapter;
+import com.whut.myMap.adapter.ScollListView;
+import com.whut.myMap.adapter.SpeakGridViewAdapter;
+import com.whut.myMap.adapter.SpeakGridView;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.picture;
+import com.whut.myMap.entites.track;
+import com.whut.myMap.serverce.findshoucang;
+import com.whut.myMap.serverce.findzan;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.favornet;
+import com.whut.net.getHuifuNet;
+import com.whut.net.praisenet;
+
+import android.R.integer;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
+
+/**
+ * list为评论列表 其余从上级传 坐标不知道
+ * 
+ * @author xxr
+ *
+ */
+public class Speak_Main_routeNET extends Activity {
+	private static final int GONE = 8;
+	private static final int VISIBLE = 0;
+	private ScollListView mListView;
+	private Route_Main_ListviewAdapter mAdapter;
+	private static trackbean trackbean;
+	private ImageView imageHead;
+	private TextView name;
+	private TextView content;
+	private static boolean iszan;
+	private static boolean isshoucang;
+	private  int ZoF = 0;
+	private static int zaned = 2;
+	private int track_id;
+	private int Dongtai_User_id;
+	private int type = 1;
+	 MediaPlayer mp = null;
+		private TextView music;
+		private View parentView;
+	private Tencent mTencent;
+	private static boolean isplay=false;
+	private static String jsonstring;
+	private final int SHOW_RESPONSE_PRAISE = 0;
+	private final int SHOW_RESPONSE_HUIFU = 1;
+	private final int SHOW_RESPONSE_SHOUCANG = 2;
+	private PopupWindow pop = null;
+	private MyApplication app;
+//	final UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.share");
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOW_RESPONSE_PRAISE:
+				Log.i("zai", "enene2");
+				if (msg.obj != null) {
+					Log.i("zai", "enene");
+					if (Integer.parseInt((String) msg.obj) == 1) {
+						if (iszan) {
+							new findzan(getApplicationContext()).deletezaned(trackbean.getTrack().getTrack_id(),
+									trackbean.getTrack().getType(), getApplicationContext());
+							showzan(false);
+							zaned=0;
+							
+						} else {
+							new findzan(getApplicationContext()).addzaned(trackbean.getTrack().getTrack_id(),
+									trackbean.getTrack().getType(), getApplicationContext());
+							showzan(true);
+							zaned=1;
+						}
+					} else {
+						Toast.makeText(getApplication(), "网络异常，请检查网络！！", 0).show();
+						return;
+					}
+				}
+				break;
+
+			case SHOW_RESPONSE_SHOUCANG:
+				Log.i("zai", "enene2");
+				if (msg.obj != null) {
+					Log.i("zai", "enene");
+					if (Integer.parseInt((String) msg.obj) == 1) {
+						if (isshoucang) {
+							new findshoucang(getApplicationContext()).deleteshoucanged(
+									trackbean.getTrack().getTrack_id(), trackbean.getTrack().getType(),
+									getApplicationContext());
+							showshoucang(false);
+						} else {
+							new findshoucang(getApplicationContext()).addshoucanged(trackbean.getTrack().getTrack_id(),
+									trackbean.getTrack().getType(), getApplicationContext());
+							showshoucang(true);
+						}
+					} else if (Integer.parseInt((String) msg.obj) == 2) {
+						return;
+					} else {
+						Toast.makeText(getApplication(), "网络异常，请检查网络！！", 0).show();
+						return;
+					}
+				}
+				break;
+			}
+		}
+	};
+
+
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		parentView = getLayoutInflater().inflate(R.layout.speak_route, null);
+		setContentView(parentView);
+		mTencent = Tencent.createInstance("1105307237", this.getApplicationContext());
+//		mController.getConfig().setPlatforms(SHARE_MEDIA.RENREN, SHARE_MEDIA.DOUBAN,
+//	              SHARE_MEDIA.YIXIN,SHARE_MEDIA.SINA,SHARE_MEDIA.TENCENT,SHARE_MEDIA.WEIXIN);	
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		trackbean = (com.whut.myMap.domain.trackbean) bundle.getSerializable("speak_item1");
+		System.out.println(trackbean.getLbsbean().size()+trackbean.getLbsbean().get(0).getLbsx());
+		showzan(new findzan(getApplicationContext()).findzaned(trackbean.getTrack().getTrack_id(),
+				trackbean.getTrack().getType(), getApplicationContext()));
+		showshoucang(new findshoucang(getApplicationContext()).findshoucanged(trackbean.getTrack().getTrack_id(),
+				trackbean.getTrack().getType(), getApplicationContext()));
+		Dongtai_User_id = trackbean.getTrack().getUser_id();
+		track_id = trackbean.getTrack().getTrack_id();
+		mListView = (ScollListView) findViewById(R.id.ui_lv);
+		mAdapter = new Route_Main_ListviewAdapter(getApplication(), trackbean);
+		mListView.setAdapter(mAdapter);
+		imageHead = (ImageView) findViewById(R.id.head);
+		name = (TextView) findViewById(R.id.username);
+		content=(TextView)findViewById(R.id.text);
+		music=(TextView)findViewById(R.id.music);
+		inintpop();
+		music.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+				 if(!isplay){
+				new Thread()  
+		        {  
+					@Override  
+		         public void run()  
+		            {  
+		                mp = new MediaPlayer();  
+		                try {  
+		                	System.out.println(trackbean.getTrack().getMusicstring());
+		                     mp.setDataSource(trackbean.getTrack().getMusicstring());  
+		                     mp.prepare();  
+		                } catch (Exception e){  
+		                	e.printStackTrace();
+		                }  
+		                    mp.start();  
+		           }  
+		       }.start();  
+				 }else if(isplay){
+					 mp.pause();
+				 }
+			}
+		});
+		ImageView titleImg=(ImageView) findViewById(R.id.toppic);
+		
+			DisplayImageOptions options = new DisplayImageOptions.Builder()//
+					.showImageOnLoading(R.drawable.loadpic) // 加载中显示的默认图片
+					.showImageOnFail(R.drawable.loadfailed) // 设置加载失败的默认图片
+					.cacheInMemory(true) // 内存缓存
+					.cacheOnDisk(true) // sdcard缓存
+					.bitmapConfig(Config.RGB_565)// 设置最低配置
+					.build();//
+			try {
+			ImageLoader.getInstance().displayImage(trackbean.getUrl(), imageHead, options);
+		} catch (Exception e) {
+			imageHead.setImageResource(R.drawable.default_head);
+		}
+			try {
+				ImageLoader.getInstance().displayImage(trackbean.getTrack().getBgurl(), titleImg, options);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				titleImg.setImageResource(R.drawable.no_background);
+			}
+			name.setText(trackbean.getUsername());
+			content.setText(trackbean.getTrack().getWords());
+			imageHead.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+//					// TODO Auto-generated method stub
+					Intent intent = new Intent(Speak_Main_routeNET.this, UserMain.class);
+					intent.putExtra("name", trackbean.getUsername());
+					intent.putExtra("userid", trackbean.getTrack().getUser_id());
+					intent.putExtra("head", trackbean.getUrl());
+					startActivityForResult(intent, 0);
+					overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
+				}
+			});
+	}
+	private class ShareListener implements IUiListener{
+		 
+	    @Override
+	    public void onCancel() {
+	        // TODO Auto-generated method stub
+	       Toast.makeText(getApplicationContext(), "分享取消", 0).show();
+	    }
+	 
+	    @Override
+	    public void onComplete(Object arg0) {
+	        // TODO Auto-generated method stub
+	    	 Toast.makeText(getApplicationContext(), "分享成功", 0).show();;
+	    }
+	 
+	    @Override
+	    public void onError(UiError arg0) {
+	        // TODO Auto-generated method stub
+	    	 Toast.makeText(getApplicationContext(), "分享出错", 0).show();;
+	    }
+	}
+	private void inintpop() {
+		// TODO Auto-generated method stub
+			pop = new PopupWindow(getApplicationContext());
+			View view = getLayoutInflater().inflate(R.layout.shareplatform, null);
+			LinearLayout share=(LinearLayout) view.findViewById(R.id.share);
+			LinearLayout qq=(LinearLayout) view.findViewById(R.id.qq);
+			LinearLayout space=(LinearLayout) view.findViewById(R.id.space);
+			pop.setWidth(LayoutParams.MATCH_PARENT);
+			pop.setHeight(LayoutParams.WRAP_CONTENT);
+			pop.setFocusable(true);
+			pop.setOutsideTouchable(true);
+			pop.setContentView(view);
+//			share.setOnClickListener(new OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					// TODO Auto-generated method stub
+//					pop.dismiss();
+//				}
+//			});
+			qq.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					shareToX(0);
+				}
+			});
+			space.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					shareToX(1);
+				}
+			});
+	}
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    ShareListener myListener = new ShareListener();   
+	    Tencent.onActivityResultData(requestCode,resultCode,data,myListener);
+	}
+	private void shareToX(int type) {
+		switch (type) {
+		case 0:
+			ShareListener myListener = new ShareListener();
+			final Bundle params = new Bundle();
+			params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);  
+			params.putString(QQShare.SHARE_TO_QQ_TITLE, "要分享的标题");
+			params.putString(QQShare.SHARE_TO_QQ_SUMMARY,  "要分享的摘要");
+			params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,  "http://www.qq.com/news/1.html");
+			params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,"https://www.baidu.com/img/bd_logo1.png");
+			mTencent.shareToQQ(this, params, myListener); 
+			break;
+		case 1:
+			ShareListener myListener1 = new ShareListener();
+			final Bundle params1 = new Bundle();
+			params1.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE,QzoneShare.SHARE_TO_QZONE_TYPE_IMAGE_TEXT);
+			params1.putString(QzoneShare.SHARE_TO_QQ_TITLE, "要分享的标题");
+			params1.putString(QzoneShare.SHARE_TO_QQ_SUMMARY,  "要分享的摘要");
+			params1.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL,  "http://www.qq.com/news/1.html");
+			params1.putString(QzoneShare.SHARE_TO_QQ_IMAGE_URL,"https://www.baidu.com/img/bd_logo1.png");
+			mTencent.shareToQzone(this, params1, myListener1); 
+			break;
+		}
+	}
+	private void shareqqzone() {
+		ShareListener myListener = new ShareListener();
+		final Bundle params = new Bundle();
+		params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE,QzoneShare.SHARE_TO_QZONE_TYPE_IMAGE_TEXT);  
+		params.putString(QQShare.SHARE_TO_QQ_TITLE, "要分享的标题");
+		params.putString(QQShare.SHARE_TO_QQ_SUMMARY,  "要分享的摘要");
+		params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,  "http://www.qq.com/news/1.html");
+		params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,"https://www.baidu.com/img/bd_logo1.png");
+		mTencent.shareToQzone(this, params, myListener); 
+	}
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		showzan(new findzan(getApplicationContext()).findzaned(trackbean.getTrack().getTrack_id(),
+				trackbean.getTrack().getType(), getApplicationContext()));
+		showshoucang(new findshoucang(getApplicationContext()).findshoucanged(trackbean.getTrack().getTrack_id(),
+				trackbean.getTrack().getType(), getApplicationContext()));
+	}
+	public void showzan(boolean bool) {
+		if (bool) {
+			iszan = true;
+			ZoF = 1;
+			getWindow().invalidatePanelMenu(Window.FEATURE_OPTIONS_PANEL);
+		} else {
+			iszan = false;
+			ZoF = 1;
+			getWindow().invalidatePanelMenu(Window.FEATURE_OPTIONS_PANEL);
+		}
+	}
+
+	public void showshoucang(boolean bool) {
+		if (bool) {
+			isshoucang = true;
+			ZoF = 2;
+			getWindow().invalidatePanelMenu(Window.FEATURE_OPTIONS_PANEL);
+		} else {
+			isshoucang = false;
+			ZoF = 2;
+			getWindow().invalidatePanelMenu(Window.FEATURE_OPTIONS_PANEL);
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.route_main_item, menu);
+		ActionBar mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.speak_main);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			sendZanBack();
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		case R.id.share:
+			// 设置文字分享内容
+			pop.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
+			return true;
+		case R.id.map:
+			Intent intent = new Intent(getApplication(), TrackshowNET.class);
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("speak_item", trackbean);
+			System.out.println(trackbean.getLbsbean().size()+trackbean.getLbsbean().get(0).getLbsx());
+			intent.putExtras(bundle);
+			startActivity(intent);
+			return true;
+		case R.id.good:
+			new Thread(new Runnable() {
+				String result;
+				int isjia;
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						Map<String, String> param = new HashMap<String, String>();
+						System.out.println(track_id);
+						if (iszan)
+							isjia = 0;
+						else
+							isjia = 1;
+						param.put("type", trackbean.getTrack().getType() + "");
+						param.put("sourceid", track_id + "");
+						param.put("isjia", isjia + "");
+						result = praisenet.praise(param);
+					} catch (Exception e) {
+						// TODO: handle exception
+						result = "0";
+					} finally {
+						Message message = new Message();
+						message.what = SHOW_RESPONSE_PRAISE;
+						if (result != null || result != "") {
+							message.obj = result.toString();
+						} else {
+							message.obj = "2";
+						}
+						handler.sendMessage(message);
+					}
+				}
+			}).start();
+			return true;
+		case R.id.favor:
+			new Thread(new Runnable() {
+				String result;
+				int isjia;
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						Map<String, String> param = new HashMap<String, String>();
+						System.out.println(track_id);
+						System.out.println(type);
+						if (isshoucang)
+							isjia = 0;
+						else
+							isjia = 1;
+						param.put("isjia", isjia + "");
+						param.put("type", type + "");
+						param.put("sourceid", track_id + "");
+						result = favornet.favor(param);
+					} catch (Exception e) {
+						// TODO: handle exception
+						result = "0";
+					} finally {
+						Message message = new Message();
+						message.what = SHOW_RESPONSE_SHOUCANG;
+						if (result != null || result != "") {
+							message.obj = result.toString();
+						} else {
+							message.obj = "2";
+						}
+						handler.sendMessage(message);
+					}
+				}
+			}).start();
+			return true;
+		case R.id.comment:
+			Intent intent1 = new Intent(Speak_Main_routeNET.this, CommentList.class);
+			comment_message cMessage=new comment_message();
+			cMessage.setType(1);
+			cMessage.setSource_id(track_id);
+			cMessage.setHuifu_user_id(Dongtai_User_id);
+//			cMessage.setCedusername();
+//			cMessage.setHuifu_id(list.get(position).getHuifu_id()0);
+			Bundle bundle1=new Bundle();
+			bundle1.putSerializable("comment",cMessage);
+			intent1.putExtras(bundle1);
+			startActivityForResult(intent1, 0);
+			overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		switch (ZoF) {
+		case 1:
+			if (iszan) {
+				menu.findItem(R.id.good).setIcon(R.drawable.good_clicked2);
+				if (isshoucang) {
+					menu.findItem(R.id.favor).setIcon(R.drawable.favor_clicked2);
+				} else {
+					menu.findItem(R.id.favor).setIcon(R.drawable.favourite_main2);
+				}
+			} else {
+				menu.findItem(R.id.good).setIcon(R.drawable.good_main2);
+				if (isshoucang) {
+					menu.findItem(R.id.favor).setIcon(R.drawable.favor_clicked2);
+				} else {
+					menu.findItem(R.id.favor).setIcon(R.drawable.favourite_main2);
+				}
+			}
+			break;
+		case 2:
+			if (isshoucang) {
+				menu.findItem(R.id.favor).setIcon(R.drawable.favor_clicked2);
+				if (iszan) {
+					menu.findItem(R.id.good).setIcon(R.drawable.good_clicked2);
+				} else {
+					menu.findItem(R.id.good).setIcon(R.drawable.good_main2);
+				}
+			} else {
+				menu.findItem(R.id.favor).setIcon(R.drawable.favourite_main2);
+				if (iszan) {
+					menu.findItem(R.id.good).setIcon(R.drawable.good_clicked2);
+				} else {
+					menu.findItem(R.id.good).setIcon(R.drawable.good_main2);
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		return true;
+	}
+
+	@Override
+	public void onBackPressed() {
+		sendZanBack();
+		finish();
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+	
+	protected void sendZanBack() {
+		// TODO Auto-generated method stub
+		Intent intent = new Intent();
+		intent.putExtra("zaned", zaned);
+		zaned = 2;
+		setResult(RESULT_OK, intent);
+	}
+}

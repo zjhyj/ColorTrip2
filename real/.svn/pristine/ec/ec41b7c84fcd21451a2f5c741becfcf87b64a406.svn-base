@@ -1,0 +1,41 @@
+package com.whut.net;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import android.util.Log;
+
+import com.baidu.mapapi.model.LatLng;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.picture;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.myMap.utils.httpclient;
+
+public class addredsnet {
+        public String addreds(redsbean redsbean) {	
+        	try {
+        	httpclient http=new httpclient();
+        	Log.e("shuju3", redsbean.getReds().getX()+"  "+redsbean.getReds().getY());
+    		Map<String ,String > parsm=new HashMap<String, String>();	
+    		gsonutil gson=new gsonutil();
+    		String jsonString1=gson.createJsonString(redsbean.getReds());
+    		parsm.put("jsonstring",jsonString1);
+    		List<File> f=new ArrayList<File>();
+    		if(redsbean.getListmap()!=null&&redsbean.getListmap().size()!=0){
+    		for(picture picture:redsbean.getListmap()){
+			f.add(new File(picture.getImgurl()));
+			}
+    		}
+    		return http.uploadSubmit(new url().geturl()+"/servlet/addredsource", parsm, f);
+			} catch (Exception e) {
+				//TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}		   	
+		}
+}

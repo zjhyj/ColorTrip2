@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item  
+        android:id="@+id/set1"  
+        android:icon="@drawable/icon_nav_setting_white_20"  
+        android:showAsAction="always"
+        android:title="设置"  >
+        <menu>
+          <item  
+        android:id="@+id/deletetrack"  
+        android:title="删除轨迹"/>  
+        <item  
+        android:id="@+id/addtrack"  
+        android:title="添加轨迹"/>  
+    <item  
+        android:id="@+id/add"  
+        android:title="添加动态"/>  
+        <item  
+        android:id="@+id/set"  
+        android:title="游记设置"/>
+        </menu>
+    </item>
+<item  
+        android:id="@+id/map"  
+        android:icon="@drawable/see_location"  
+        android:showAsAction="always"  
+        android:title="查看地图"/>  
+         <item  
+        android:id="@+id/share"  
+        android:icon="@drawable/upload27"  
+        android:showAsAction="always"  
+        android:title="分享"/>  
+        
+</menu>
+

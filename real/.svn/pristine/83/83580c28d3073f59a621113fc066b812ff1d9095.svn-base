@@ -1,0 +1,31 @@
+package com.whut.myMap.domain;
+
+import java.util.List;
+
+public class dongtaitrackbean {
+	 private List<comment_message> huifu;
+    private trackbean trackbean;
+	public List<comment_message> getHuifu() {
+		return huifu;
+	}
+	public void setHuifu(List<comment_message> huifu) {
+		this.huifu = huifu;
+	}
+	public trackbean getTrackbean() {
+		return trackbean;
+	}
+	public void setTrackbean(trackbean trackbean) {
+		this.trackbean = trackbean;
+	}
+	public dongtaitrackbean(List<comment_message> huifu, trackbean trackbean) {
+		super();
+		this.huifu = huifu;
+		this.trackbean = trackbean;
+	}
+	public dongtaitrackbean() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+    
+}
+

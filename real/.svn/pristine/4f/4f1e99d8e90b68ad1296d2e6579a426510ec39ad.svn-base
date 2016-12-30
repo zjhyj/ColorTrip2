@@ -1,0 +1,110 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+import java.sql.Date;
+import java.util.UUID;
+
+import android.R.integer;
+
+public class comment_message implements Serializable {
+		private int huifu_id;
+		private int huifu_user_id;  //null
+		private int type;
+		private int source_id;	
+		private int ceduserid;
+		private String huifu_user_name;
+		private String cedusername;
+		private String huifuwords;
+		private String date;
+		private String huifu_user_image;
+		private int huifu_id_before;
+		public int getHuifu_id() {
+			return huifu_id;
+		}
+		public void setHuifu_id(int huifu_id) {
+			this.huifu_id = huifu_id;
+		}
+		public int getHuifu_user_id() {
+			return huifu_user_id;
+		}
+		public void setHuifu_user_id(int huifu_user_id) {
+			this.huifu_user_id = huifu_user_id;
+		}
+		public int getType() {
+			return type;
+		}
+		public void setType(int type) {
+			this.type = type;
+		}
+		public int getSource_id() {
+			return source_id;
+		}
+		public void setSource_id(int source_id) {
+			this.source_id = source_id;
+		}
+		public int getCeduserid() {
+			return ceduserid;
+		}
+		public void setCeduserid(int ceduserid) {
+			this.ceduserid = ceduserid;
+		}
+		public String getHuifu_user_name() {
+			return huifu_user_name;
+		}
+		public void setHuifu_user_name(String huifu_user_name) {
+			this.huifu_user_name = huifu_user_name;
+		}
+		public String getCedusername() {
+			return cedusername;
+		}
+		public void setCedusername(String cedusername) {
+			this.cedusername = cedusername;
+		}
+		public String getHuifuwords() {
+			return huifuwords;
+		}
+		public void setHuifuwords(String huifuwords) {
+			this.huifuwords = huifuwords;
+		}
+		public String getDate() {
+			return date;
+		}
+		public void setDate(String date) {
+			this.date = date;
+		}
+		public String getHuifu_user_image() {
+			return huifu_user_image;
+		}
+		public void setHuifu_user_image(String huifu_user_image) {
+			this.huifu_user_image = huifu_user_image;
+		}
+		public int getHuifu_id_before() {
+			return huifu_id_before;
+		}
+		public void setHuifu_id_before(int huifu_id_before) {
+			this.huifu_id_before = huifu_id_before;
+		}
+		 public comment_message(int huifu_id, int huifu_user_id, int type, int source_id,
+				int ceduserid, String huifu_user_name, String cedusername,
+				String huifuwords, String date, String huifu_user_image,
+				int huifu_id_before) {
+			super();
+			this.huifu_id = huifu_id;
+			this.huifu_user_id = huifu_user_id;
+			this.type = type;
+			this.source_id = source_id;
+			this.ceduserid = ceduserid;
+			this.huifu_user_name = huifu_user_name;
+			this.cedusername = cedusername;
+			this.huifuwords = huifuwords;
+			this.date = date;
+			this.huifu_user_image = huifu_user_image;
+			this.huifu_id_before = huifu_id_before;
+		}
+		public comment_message() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+		
+
+	}

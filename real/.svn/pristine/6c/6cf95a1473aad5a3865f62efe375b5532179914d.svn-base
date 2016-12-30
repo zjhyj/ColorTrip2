@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/map_layer_background" >
+
+    <ImageView
+        android:id="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/common_xhpdi" />
+<ImageView 
+    android:id="@+id/adv"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:scaleType="centerCrop"
+    android:layout_toRightOf="@id/line"
+    android:layout_centerVertical="true"
+    android:src="@drawable/advertisement1"
+    android:layout_marginLeft="3dp"/>
+    <TextView
+        android:id="@+id/money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_toRightOf="@id/adv"
+        android:text="100"
+        android:textColor="#ff3333"
+        android:textSize="35sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="44dp"
+        android:layout_toRightOf="@id/money"
+        android:text="元代金券"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/icon_jifen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/money"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="30dp"
+        android:layout_toRightOf="@id/adv"
+        android:src="@drawable/skin_icn_jifen" />
+
+    <TextView
+        android:id="@+id/jifen_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/money"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_toRightOf="@id/icon_jifen"
+        android:text="3"
+        android:textColor="#666666"
+        android:textSize="16sp" />
+     <TextView
+        android:id="@+id/jifen_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/money"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="15dp"
+        android:layout_toRightOf="@id/jifen_num"
+        android:text="积分"
+        android:textColor="#666666"
+        android:textSize="16sp" />
+<Button 
+    android:id="@+id/buy"
+    android:layout_width="50dp"
+    android:layout_height="30dp"
+    android:layout_alignParentRight="true"
+android:layout_centerVertical="true"
+    android:layout_marginRight="5dp"
+    android:text="兑换"
+    android:textColor="#ff3333"
+    android:textSize="14sp"
+    android:background="@drawable/buy_btn"/>
+
+</RelativeLayout>

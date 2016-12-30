@@ -1,0 +1,125 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+import android.R.integer;
+
+public class show_comment implements Serializable {
+	private int huifu_id;
+	private int type;
+	private int source_id;	//被评论的动态id
+	private int huifu_user;
+	private String nowname;
+	private String beforename;
+	private int huifu_user_commented;
+	private String nowwords;
+	private String beforewords;
+	private String date;
+	private String userimage;
+	private String dtword;
+	private String dtname;
+	
+	public String getDtword() {
+		return dtword;
+	}
+	public void setDtword(String dtword) {
+		this.dtword = dtword;
+	}
+	public String getDtname() {
+		return dtname;
+	}
+	public void setDtname(String dtname) {
+		this.dtname = dtname;
+	}
+	public int getHuifu_id() {
+		return huifu_id;
+	}
+	public void setHuifu_id(int huifu_id) {
+		this.huifu_id = huifu_id;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	public int getSource_id() {
+		return source_id;
+	}
+	public void setSource_id(int source_id) {
+		this.source_id = source_id;
+	}
+	public int getHuifu_user() {
+		return huifu_user;
+	}
+	public void setHuifu_user(int huifu_user) {
+		this.huifu_user = huifu_user;
+	}
+	public String getNowname() {
+		return nowname;
+	}
+	public void setNowname(String nowname) {
+		this.nowname = nowname;
+	}
+	public String getBeforename() {
+		return beforename;
+	}
+	public void setBeforename(String beforename) {
+		this.beforename = beforename;
+	}
+	public int getHuifu_user_commented() {
+		return huifu_user_commented;
+	}
+	public void setHuifu_user_commented(int huifu_user_commented) {
+		this.huifu_user_commented = huifu_user_commented;
+	}
+	public String getNowwords() {
+		return nowwords;
+	}
+	public void setNowwords(String nowwords) {
+		this.nowwords = nowwords;
+	}
+	public String getBeforewords() {
+		return beforewords;
+	}
+	public void setBeforewords(String beforewords) {
+		this.beforewords = beforewords;
+	}
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public String getUserimage() {
+		return userimage;
+	}
+	public void setUserimage(String userimage) {
+		this.userimage = userimage;
+	}
+	public show_comment(int huifu_id, int type, int source_id, int huifu_user, String nowname, String beforename,
+			int huifu_user_commented, String nowwords, String beforewords, String date, String userimage, String dtword,
+			String dtname) {
+		super();
+		this.huifu_id = huifu_id;
+		this.type = type;
+		this.source_id = source_id;
+		this.huifu_user = huifu_user;
+		this.nowname = nowname;
+		this.beforename = beforename;
+		this.huifu_user_commented = huifu_user_commented;
+		this.nowwords = nowwords;
+		this.beforewords = beforewords;
+		this.date = date;
+		this.userimage = userimage;
+		this.dtword = dtword;
+		this.dtname = dtname;
+	}
+	public show_comment() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+}

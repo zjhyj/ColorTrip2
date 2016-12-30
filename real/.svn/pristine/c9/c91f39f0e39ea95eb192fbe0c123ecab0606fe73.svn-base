@@ -1,0 +1,89 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+public class clusterpair implements Serializable {
+    private int clusterpair_id;
+    private double px;
+    private double py;
+    private double lx;
+    private double ly;
+    private int net_id;
+    private int Pclusterid;
+    private int Lclusterid;
+    private int iscontain;
+	public int getClusterpair_id() {
+		return clusterpair_id;
+	}
+	public void setClusterpair_id(int clusterpair_id) {
+		this.clusterpair_id = clusterpair_id;
+	}
+	public double getPx() {
+		return px;
+	}
+	public void setPx(double px) {
+		this.px = px;
+	}
+	public double getPy() {
+		return py;
+	}
+	public void setPy(double py) {
+		this.py = py;
+	}
+	public double getLx() {
+		return lx;
+	}
+	public void setLx(double lx) {
+		this.lx = lx;
+	}
+	public double getLy() {
+		return ly;
+	}
+	public void setLy(double ly) {
+		this.ly = ly;
+	}
+	public int getNet_id() {
+		return net_id;
+	}
+	public void setNet_id(int net_id) {
+		this.net_id = net_id;
+	}
+	
+	public int getPclusterid() {
+		return Pclusterid;
+	}
+	public void setPclusterid(int pclusterid) {
+		Pclusterid = pclusterid;
+	}
+	public int getLclusterid() {
+		return Lclusterid;
+	}
+	public void setLclusterid(int lclusterid) {
+		Lclusterid = lclusterid;
+	}
+	public int getIscontain() {
+		return iscontain;
+	}
+	public void setIscontain(int iscontain) {
+		this.iscontain = iscontain;
+	}
+	
+	public clusterpair(int clusterpair_id, double px, double py, double lx,
+			double ly, int net_id, int pclusterid, int lclusterid, int iscontain) {
+		super();
+		this.clusterpair_id = clusterpair_id;
+		this.px = px;
+		this.py = py;
+		this.lx = lx;
+		this.ly = ly;
+		this.net_id = net_id;
+		Pclusterid = pclusterid;
+		Lclusterid = lclusterid;
+		this.iscontain = iscontain;
+	}
+	public clusterpair() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+    
+}

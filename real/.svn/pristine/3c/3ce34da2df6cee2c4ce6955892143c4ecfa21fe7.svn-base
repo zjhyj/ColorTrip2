@@ -1,0 +1,60 @@
+package com.whut.myMap.entites;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class lbs implements Serializable{
+	 private int lbs_id;
+	    private double x;
+	    private double y;
+	    private int iscontain;
+	    private int track_id;
+		public int getLbs_id() {
+			return lbs_id;
+		}
+		public void setLbs_id(int lbs_id) {
+			this.lbs_id = lbs_id;
+		}
+		public double getX() {
+			return x;
+		}
+		public void setX(double x) {
+			this.x = x;
+		}
+		public double getY() {
+			return y;
+		}
+		public void setY(double y) {
+			this.y = y;
+		}
+		public int getTrack_id() {
+			return track_id;
+		}
+		public void setTrack_id(int track_id) {
+			this.track_id = track_id;
+		}
+		
+		public int getIscontain() {
+			return iscontain;
+		}
+		public void setIscontain(int iscontain) {
+			this.iscontain = iscontain;
+		}
+		public lbs(int lbs_id, double x, double y, int iscontain, int track_id) {
+			super();
+			this.lbs_id = lbs_id;
+			this.x = x;
+			this.y = y;
+			this.iscontain = iscontain;
+			this.track_id = track_id;
+		}
+		public lbs() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+		@Override
+		public String toString() {
+			return "lbs [lbs_id=" + lbs_id + ", x=" + x + ", y=" + y
+					+ ", track_id=" + track_id + "]";
+		} 
+}

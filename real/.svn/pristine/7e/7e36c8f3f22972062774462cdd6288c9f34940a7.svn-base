@@ -1,0 +1,55 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+public class concernview implements Serializable{
+	private int user_id;
+	private int concern_id;  
+	private int concern_user_id;
+	private String username;	
+	private String userimage;
+	public int getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
+	}
+	public int getConcern_id() {
+		return concern_id;
+	}
+	public void setConcern_id(int concern_id) {
+		this.concern_id = concern_id;
+	}
+	public int getConcern_user_id() {
+		return concern_user_id;
+	}
+	public void setConcern_user_id(int concern_user_id) {
+		this.concern_user_id = concern_user_id;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getUserimage() {
+		return userimage;
+	}
+	public void setUserimage(String userimage) {
+		this.userimage = userimage;
+	}
+	public concernview(int user_id, int concern_id, int concern_user_id,
+			String username, String userimage) {
+		super();
+		this.user_id = user_id;
+		this.concern_id = concern_id;
+		this.concern_user_id = concern_user_id;
+		this.username = username;
+		this.userimage = userimage;
+	}
+	public concernview() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+}

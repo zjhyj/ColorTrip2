@@ -1,0 +1,150 @@
+package com.whut.myMap.utils;
+
+import com.whut.myMap.domain.medal;
+
+public class MedalCal {
+	public static int calTravels(medal medal){
+		int travel=medal.getTracknum();
+		if (travel>=100) {
+			return 5;
+		} else if (travel>=50) {
+			return 4;
+		}else if (travel>=20) {
+			return 3;
+		}else if (travel>=5) {
+			return 2;
+		}else if (travel>=1) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	public static  int calCity(medal medal){
+		int travel=medal.getLocalnum();
+		if (travel>=50) {
+			return 5;
+		} else if (travel>=20) {
+			return 4;
+		}else if (travel>=10) {
+			return 3;
+		}else if (travel>=5) {
+			return 2;
+		}else if (travel>=2) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	public static  int calComm(medal medal){
+		int travel=medal.getCommnum();
+		if (travel>=50) {
+			return 5;
+		} else if (travel>=20) {
+			return 4;
+		}else if (travel>=10) {
+			return 3;
+		}else if (travel>=5) {
+			return 2;
+		}else if (travel>=1) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	public static  int calSumlength(medal medal){
+		double travel=medal.getSumlength();
+		if (travel>=100000) {
+			return 5;
+		} else if (travel>=50000) {
+			return 4;
+		}else if (travel>=10000) {
+			return 3;
+		}else if (travel>=5000) {
+			return 2;
+		}else if (travel>=1000) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	public static  int calMaxzannum(medal medal){
+		double travel=medal.getMaxzannum();
+		if (travel>=3000) {
+			return 5;
+		} else if (travel>=1000) {
+			return 4;
+		}else if (travel>=500) {
+			return 3;
+		}else if (travel>=100) {
+			return 2;
+		}else if (travel>=10) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	public static  int calSumzannum(medal medal){
+		double travel=medal.getSumzannum();
+		if (travel>=10000) {
+			return 5;
+		} else if (travel>=5000) {
+			return 4;
+		}else if (travel>=1000) {
+			return 3;
+		}else if (travel>=200) {
+			return 2;
+		}else if (travel>=50) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	public static  int calConcernnum(medal medal){
+		double travel=medal.getConcernnum();
+		if (travel>=1000) {
+			return 5;
+		} else if (travel>=500) {
+			return 4;
+		}else if (travel>=100) {
+			return 3;
+		}else if (travel>=50) {
+			return 2;
+		}else if (travel>=10) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	public static  int calShoucangnum(medal medal){
+		double travel=medal.getShoucangnum();
+		if (travel>=300) {
+			return 5;
+		} else if (travel>=100) {
+			return 4;
+		}else if (travel>=50) {
+			return 3;
+		}else if (travel>=20) {
+			return 2;
+		}else if (travel>=5) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	public static  int calScorenum(medal medal){
+		double travel=medal.getScorenum();
+		if (travel>=5000) {
+			return 5;
+		} else if (travel>=2000) {
+			return 4;
+		}else if (travel>=1000) {
+			return 3;
+		}else if (travel>=500) {
+			return 2;
+		}else if (travel>=100) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+}

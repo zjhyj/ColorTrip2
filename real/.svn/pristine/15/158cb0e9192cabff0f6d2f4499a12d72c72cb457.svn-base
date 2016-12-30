@@ -1,0 +1,52 @@
+package com.whut.myMap;
+
+import com.whut.myMap.serverce.trackservice;
+
+import android.text.Editable;
+import android.util.Log;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class Savetrack extends Activity {
+	 private static String str;
+    int  trackid;
+    EditText edit;
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_savetrack);
+	    edit=(EditText) findViewById(R.id.edit);
+		Button but=(Button) findViewById(R.id.baocun);
+		Intent intent=getIntent();
+	 trackid=intent.getIntExtra("trackid", 0);
+	    but.setOnClickListener( new mybutclick() );
+	}
+	public class mybutclick  implements OnClickListener{	
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				try{
+					if(trackid!=0){
+				    	 str=edit.getText().toString();   
+				    	 Log.i("trackidsave", trackid+"");
+				    }	
+				trackservice service=new trackservice(getApplication());
+				service.updatetrackwords(str,trackid,getApplication());
+				Log.i("savetrack", str+trackid);
+				Toast.makeText(getApplication(),"保存成功！",Toast.LENGTH_LONG);
+				str=null;
+				finish();
+				}
+				catch(Exception e){
+					Toast.makeText(getApplication(),"保存保存失败，请重试！",Toast.LENGTH_LONG);
+			}		
+		}
+	}	
+	}

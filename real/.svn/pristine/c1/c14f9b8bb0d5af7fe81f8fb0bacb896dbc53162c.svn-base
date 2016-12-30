@@ -1,0 +1,286 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.InfoWindow;
+import com.baidu.mapapi.map.MapPoi;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.BaiduMap.OnMapClickListener;
+import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
+import com.baidu.mapapi.model.LatLng;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.Redslocation.ViewHolder;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.picture;
+import com.whut.myMap.utils.pictureutil;
+
+import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap.Config;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+public class TrackshowNET extends Activity {
+	 public MapView mapView = null;  
+     public BaiduMap baiduMap = null;  
+ 	 private View Mymarker; 
+ 	List <LatLng>  lat=new ArrayList<LatLng>();
+ 	private ImageButton local;
+    private ImageButton red;
+ 	private BitmapDescriptor miconlocation;
+ 	private LocationClient locationclient;
+ 	LatLng lat1 ;
+ 	LatLng lat2;
+ 	BDLocationListener mylistener=new BDLocationListener() {
+		@Override
+		public void onReceiveLocation(BDLocation  location) {
+			// TODO Auto-generated method stub
+			 if (location == null) {  
+	                return;   }  
+			MyLocationData locationdata=new MyLocationData.Builder().
+					accuracy(location.getRadius()).
+					direction(location.getDerect()).
+					latitude(location.getLatitude()).
+					longitude(location.getLongitude()).build();
+			baiduMap.setMyLocationData(locationdata);
+			   MyLocationConfiguration config=new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, true,miconlocation);
+			    baiduMap.setMyLocationConfigeration(config);
+				LatLng  firstloc=new LatLng(location.getLatitude(),location.getLongitude());
+				MapStatusUpdate u=MapStatusUpdateFactory.newLatLng(firstloc);
+				baiduMap.animateMapStatus(u);
+		}
+ 	};
+	/* (non-Javadoc)
+	 * @see android.support.v7.app.ActionBarActivity#onCreate(android.os.Bundle)
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		SDKInitializer.initialize(getApplicationContext());
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_redslocation);
+		miconlocation = BitmapDescriptorFactory.fromResource(R.drawable.follow);
+		mapView=(MapView) findViewById(R.id.bmapView);
+		baiduMap=mapView.getMap();
+		baiduMap.setMapType(baiduMap.MAP_TYPE_NORMAL);
+		baiduMap.setMyLocationEnabled(true);
+		red=(ImageButton) findViewById(R.id.red);
+		red.setOnClickListener(new OnClickListener() {		
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				MapStatusUpdate u=MapStatusUpdateFactory.newLatLng(lat1);
+				baiduMap.animateMapStatus(u);
+			}
+		});
+		local=(ImageButton) findViewById(R.id.dingwei);
+		local.setOnClickListener(new OnClickListener() {		
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				 if(locationclient != null &&locationclient.isStarted());
+				 locationclient.requestLocation();
+			 }
+		});
+		 baiduMap.setOnMapClickListener(new OnMapClickListener()  
+	        {  
+	            @Override  
+	            public boolean onMapPoiClick(MapPoi arg0)  
+	            {  
+	                return false;  
+	            }  
+	            @Override  
+	            public void onMapClick(LatLng arg0)  
+	            { 
+	            	 Mymarker.setVisibility(View.VISIBLE);  
+	                baiduMap.hideInfoWindow();  
+	            }  
+	        });  
+		locationclient=new LocationClient(this);
+		locationclient.registerLocationListener(mylistener);
+		locationclient.start(); // 开始定位;
+		Mymarker=findViewById(R.id.markerinfo);
+		baiduMap=mapView.getMap();
+		baiduMap.setMapType(baiduMap.MAP_TYPE_NORMAL);
+		baiduMap.setMyLocationEnabled(true);
+		 baiduMap.setOnMapClickListener(new OnMapClickListener()  
+	        {  
+	            @Override  
+	            public boolean onMapPoiClick(MapPoi arg0)  
+	            {  
+	                return false;  
+	            }  
+	            @Override  
+	            public void onMapClick(LatLng arg0)  
+	            {  
+	                Mymarker.setVisibility(View.GONE);  
+	                baiduMap.hideInfoWindow();  
+	            }  
+	        });  
+		Intent intent=getIntent();
+		Bundle bundle=intent.getExtras();
+		trackbean tra= (com.whut.myMap.domain.trackbean) bundle.getSerializable("speak_item");
+		 lat1 =new LatLng(tra.getLbsbean().get(0).getX(), tra.getLbsbean().get(0).getY());
+		 lat2 =new LatLng(tra.getLbsbean().get(tra.getLbsbean().size()-1).getX(), tra.getLbsbean().get(tra.getLbsbean().size()-1).getY());
+
+		MapStatusUpdate u=MapStatusUpdateFactory.newLatLng(lat1);
+		baiduMap.animateMapStatus(u);
+		BitmapDescriptor bitmapstart = BitmapDescriptorFactory  
+ 	            .fromResource(R.drawable.icon_track_navi_end);  
+ 	        //构建MarkerOption，用于在地图上添加Marker  
+ 	        OverlayOptions option1 = new MarkerOptions()  
+ 	            .position(lat1)  
+ 	            .icon(bitmapstart);  
+ 	       BitmapDescriptor bitmapend = BitmapDescriptorFactory  
+ 	 	            .fromResource(R.drawable.icon_track_navi_start);  
+ 	 	        //构建MarkerOption，用于在地图上添加Marker  
+ 	 	        OverlayOptions option2 = new MarkerOptions()  
+ 	 	            .position(lat2)  
+ 	 	            .icon(bitmapend);  
+ 	        //在地图上添加Marker，并显示
+ 	    baiduMap.addOverlay(option1);
+		baiduMap.addOverlay(option2);
+		List<lbs> listlbs=tra.getLbsbean();
+		Log.i("lbslength",listlbs.size() +"");
+		for(lbs lb:listlbs){
+			LatLng L=new LatLng(lb.getX(), lb.getY());
+			lat.add(L);	
+			Log.i("lbs", lb.getX()+"  "+lb.getY());
+		}
+		OverlayOptions polygonOption = new PolylineOptions().color(0xAA339900)
+    			.points(lat);  	
+    		 baiduMap.addOverlay(polygonOption);
+    		 if(tra.getRedsbean()!=null){
+    	    for(redsbean redsbean:tra.getRedsbean()){
+    		LatLng lat=new LatLng(redsbean.getReds().getX(), redsbean.getReds().getY());
+    		 BitmapDescriptor bitmap = BitmapDescriptorFactory  
+    		            .fromResource(R.drawable.flag);  
+    		        //构建MarkerOption，用于在地图上添加Marker  
+    		        OverlayOptions option= new MarkerOptions()  
+    		            .position(lat)  
+    		            .icon(bitmap);  
+    		        //在地图上添加Marker，并显示
+    		       Marker marker = (Marker) (baiduMap.addOverlay(option)); 
+    		      Bundle bundle1 = new Bundle();  
+    	         bundle1.putSerializable("redsbean", redsbean);  
+    	         marker.setExtraInfo(bundle1);    
+    		       baiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {					
+    					@Override
+    					public boolean onMarkerClick(Marker marker) {
+    						// TODO Auto-generated method stub
+    						redsbean redsbean = (redsbean) marker.getExtraInfo().get("redsbean");  
+    		                InfoWindow mInfoWindow = null;  
+    		                //生成一个TextView用户在地图中显示InfoWindow  
+    		                TextView location = new TextView(getApplicationContext());   
+    		                location.setPadding(30, 20, 30, 50);  
+    		                location.setText(redsbean.getReds().getWords()); 
+    		                location.setTextColor(Color.rgb(199,21,133));
+    		            
+    		                WindowManager wm = (WindowManager) getApplication()
+    		                    .getSystemService(Context.WINDOW_SERVICE);
+    		         int width = wm.getDefaultDisplay().getWidth();
+    		          location.setMaxWidth(width*2/3);
+    		                //将marker所在的经纬度的信息转化成屏幕上的坐标  
+    		                final LatLng ll = marker.getPosition();  
+    		                mInfoWindow =new InfoWindow(location, ll, -47);
+    		              //显示InfoWindow  
+    		                baiduMap.showInfoWindow(mInfoWindow);  
+    		                //设置详细信息布局为可见  
+   		                Mymarker.setVisibility(View.VISIBLE);  
+    		                //根据商家信息为详细信息布局设置信息  
+    		                popupInfo(Mymarker, redsbean);  
+    		                return true;  
+    					}
+    					private void popupInfo(View mymarker,
+    							final redsbean redsbean) {
+    						// TODO Auto-generated method stub
+    					        ViewHolder viewHolder = null;  
+    					        if (mymarker.getTag() == null)  
+    					        {  
+    					            viewHolder = new ViewHolder();  
+    					            viewHolder.infoImg = (ImageView) mymarker  
+    					                    .findViewById(R.id.info_img);  
+    					            viewHolder.infoName = (TextView) mymarker 
+    					                    .findViewById(R.id.info_name);  
+    					            viewHolder.infoZan = (TextView) mymarker  
+    					                    .findViewById(R.id.info_zan);  
+    					            viewHolder.zan=(ImageView) mymarker.findViewById(R.id.zan);
+    					            viewHolder.but=(Button) mymarker.findViewById(R.id.but);
+    					            mymarker.setTag(viewHolder);  
+    					            viewHolder.but.setOnClickListener(new OnClickListener() {	
+										@Override
+										public void onClick(View v) {
+											// TODO Auto-generated method stub
+											Intent intent =new Intent(getApplication(),Speak_MainNET.class);
+											Bundle bundle=new Bundle();
+											bundle.putSerializable("speak_item", redsbean);
+											intent.putExtras(bundle);
+											startActivity(intent);
+										}
+									});
+    					        }     					        
+    					        viewHolder = (ViewHolder) mymarker.getTag();
+    					        picture picture =redsbean.getListmap().get(0);
+    					        if(picture.getImgurl()==null){
+    					        	viewHolder. infoImg.setVisibility(View.GONE);
+
+    					        }else{
+    					        	DisplayImageOptions options = new DisplayImageOptions.Builder()//
+    								.showImageOnLoading(R.drawable.loadpic) // 加载中显示的默认图片
+    								.showImageOnFail(R.drawable.loadfailed) // 设置加载失败的默认图片
+    								.cacheInMemory(true) //内存缓存
+    								.cacheOnDisk(true) //sdcard缓存
+    								.bitmapConfig(Config.RGB_565)//设置最低配置
+    								.build();//
+    						    ImageLoader.getInstance().displayImage(picture.getImgurl(),
+    						    viewHolder.infoImg , options);   					       				        
+    					    }
+    					    viewHolder.infoName.setText(redsbean.getReds().getWords());  
+					        viewHolder.infoZan.setText(redsbean.getReds().getZan() + ""); 
+					        viewHolder.zan.setImageResource(R.drawable.icon_details_collect_selected);
+    					     }
+    					}
+    				);
+    	}
+	}
+}
+    	class ViewHolder
+    	{  
+    	    ImageView infoImg;  
+    	    TextView infoName;   
+    	    TextView infoZan;  
+    	    ImageView zan;
+    	    Button but;
+    	}  
+}	

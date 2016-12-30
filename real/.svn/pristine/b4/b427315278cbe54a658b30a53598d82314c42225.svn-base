@@ -1,0 +1,213 @@
+package com.whut.myMap;
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+
+import com.baidu.a.a.a.c;
+import com.baidu.navisdk.CommonParams;
+import com.google.gson.Gson;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.domain.dongtaipointbean;
+import com.whut.myMap.domain.huifubean;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.addCommentNet;
+import com.whut.net.praisenet;
+
+import android.R.integer;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class WriteComment extends Activity {
+	private EditText editText;
+	private int Reds_id;
+	private String SpeakType;
+	private String Source_id;
+	private int Type;
+	private String commented_name;
+	private int Huifu_user_id;
+	private final int SHOW_RESPONSE = 0;
+	private comment_message Message;
+	protected String jsonstring;
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if (msg.obj != null) {
+					Log.i("zai", "enene");
+					if (Integer.parseInt((String) msg.obj) == 1) {
+						Log.i("zai", "enene3");
+						try {
+//							Message = (comment_message) gsonutil.getobject(jsonstring, comment_message.class);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						// 返回给上一activity
+						
+						
+					} else {
+						Toast.makeText(getApplication(), "网络异常，请检查网络！！", 1).show();
+						return;
+					}
+				}
+			}
+		}
+	};
+
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.comment_main);
+		Intent intent = getIntent();
+		Type = intent.getIntExtra("tp", 1);
+		// SpeakType=intent.getStringExtra("type");
+		// Source_id=intent.getStringExtra("sourceid");
+		// Huifu_user_id=intent.getIntExtra("Huifu_user_id", 0);
+		// 获取该Intent所携带的数据
+		Bundle bundle = intent.getExtras();
+		// 从bundle数据包中取出数据
+		Message = (comment_message) bundle.getSerializable("comment_user_who");
+		editText = (EditText) findViewById(R.id.cm_comment);
+		if (Type == 0) {
+			getActionBar().setTitle("回复评论");
+			commented_name = Message.getCedusername();
+
+		} else {
+			getActionBar().setTitle("发评论");
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.comment_menu, menu);
+		ActionBar mActionBar = getActionBar();
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+	}
+
+	/**
+	 * 写评论
+	 *
+	 * 评论，日期，被评头像，被评人名字 private UUID huifu_id; private int dongtai_id; private
+	 * String hfusername; private String hfuwords; private Date hfutime; private
+	 * String hfuimage;
+	 * 
+	 * @return
+	 */
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		case R.id.cancel_post:
+			finish();
+			return true;
+		case R.id.post:
+			comment_message cMessage = new comment_message();
+			// cMessage.setCeduserid(Message.getCeduserid());
+			if (Type == 0) {
+				cMessage.setCeduserid(Message.getCeduserid());
+				cMessage.setHuifuwords(editText.getText().toString());
+				cMessage.setCedusername(commented_name);
+			} else {
+				cMessage.setCeduserid(0);
+				cMessage.setHuifuwords(editText.getText().toString());
+			}
+			// 1、获取Preferences
+			SharedPreferences settings = getSharedPreferences("userInfo", 0);
+			// 2、取出数据
+			String name = settings.getString(url.SPUSER_NAME, null);
+			final int id = settings.getInt(url.SPUSER_ID, 0);
+			cMessage.setHuifu_user_name(name);
+			cMessage.setHuifu_user_id(id);
+			cMessage.setHuifu_user_image(settings.getString(url.SPUSER_IMAGE, null));
+			SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+			final String date = sDateFormat.format(new java.util.Date());
+			cMessage.setDate(date);
+			// cMessage.setHuifu_user_id(Huifu_user_id);
+
+			// Gson gson = new Gson();
+			// String gString = gson.toJson(cMessage);
+			// Toast.makeText(getApplication(), gString, 1).show();
+			// try {
+			// message = gson.fromJson(gString, comment_message.class);
+			// } catch (Exception e) {
+			// // TODO: handle exception
+			// }
+			// Toast.makeText(getApplication(), message.getDongtai_id() + "", 1)
+			// .show();
+			new Thread(new Runnable() {
+				String result;
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						huifubean hfbean = new huifubean();
+						hfbean.setDate(date);
+						hfbean.setHuifu_user(id);
+						hfbean.setHuifuwords(editText.getText().toString());
+					
+					hfbean.setHuifu_user_commented(Message.getCeduserid());
+						hfbean.setSource_id(Message.getSource_id());
+						hfbean.setType(Message.getType());
+						hfbean.setHuifu_id_before(Message.getHuifu_id());
+						addCommentNet addCN = new addCommentNet();
+						String jsonstring1 = addCN.addComment(hfbean);
+						System.out.println(jsonstring1);
+						if (jsonstring1 != null && jsonstring1.length() > 0) {
+							jsonstring = jsonstring1;
+							result = "1";
+//							Message = (comment_message) gsonutil.getobject(jsonstring, comment_message.class);
+						} else {
+							result = "0";
+							return;
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+						result = "0";
+					} finally {
+						Log.i("result", result.toString());
+						
+					}
+				}
+			}).start();
+			
+			Intent intent = new Intent();
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("comment",cMessage );
+			intent.putExtras(bundle);
+			setResult(RESULT_OK, intent);
+			finish();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+	}
+
+}

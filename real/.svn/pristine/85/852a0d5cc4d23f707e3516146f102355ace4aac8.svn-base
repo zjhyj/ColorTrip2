@@ -1,0 +1,350 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.whut.myMap.adapter.ListViewAdapter_speak_route;
+import com.whut.myMap.adapter.myroute;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.deleteUtilNet;
+import com.whut.net.getfavordongtairoute;
+import com.whut.net.getredsbyhotnet;
+import com.whut.net.getredsbytimenet;
+import com.whut.net.gettrackbytimenet;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+
+public class ChooseConcernTravel extends Activity {
+	private ActionBar mActionBar;
+	private LinkedList<trackbean> mList;
+	private static ArrayList<trackbean> person;
+	private static String jsonstring;
+	private ListViewAdapter_speak_route myAdapter;
+	static final int MENU_MANUAL_REFRESH = 0;
+	static final int MENU_DISABLE_SCROLL = 1;
+	static final int MENU_SET_MODE = 2;
+	static final int MENU_DEMO = 3;
+	private final int SHOW_RESPONSE = 0;
+	private final int SHOW_RESPONSE_FIRST = 1;
+	private static boolean flag;
+	private PullToRefreshListView mPullRefreshListView;
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			person = new ArrayList<trackbean>();
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if (Integer.parseInt((String) msg.obj) == 1) {
+					Log.i("zai", "enene");
+					Log.i("zai", "enene3");
+					gsonutil gson = new gsonutil();
+					Log.i("json", jsonstring);
+					person = (ArrayList<trackbean>) gson.fromJsonList(jsonstring, trackbean.class);
+				} else {
+					Toast.makeText(ChooseConcernTravel.this, "没有更多了！", 0).show();
+					return;
+				}
+				break;
+			case SHOW_RESPONSE_FIRST:
+				if (Integer.parseInt((String) msg.obj) == 1) {
+					Log.i("zai", "enene");
+					Log.i("zai", "enene3");
+					gsonutil gson = new gsonutil();
+					Log.i("jsonROUT", jsonstring);
+					person = (ArrayList<trackbean>) gson.fromJsonList(jsonstring, trackbean.class);
+					for (int i = 0; i < person.size(); i++) {
+						mList.add(person.get(i));
+					}
+					myAdapter.notifyDataSetChanged();
+					mPullRefreshListView.onRefreshComplete();
+				} else {
+					return;
+				}
+				break;
+			
+			}
+		}
+	};
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.pulltorefresh_cotainer);
+		person = new ArrayList<trackbean>();
+		mList = new LinkedList<trackbean>();
+		myAdapter = new ListViewAdapter_speak_route(mList, ChooseConcernTravel.this);
+		getData();
+		mPullRefreshListView = (PullToRefreshListView) findViewById(R.id.pull_refresh_list);
+		/**
+		 * 实现 接口 OnRefreshListener2<ListView> 以便与监听 滚动条到顶部和到底部
+		 */
+		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener2<ListView>() {
+			@Override
+			public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+				flag = false;
+				new GetDataTask().execute();
+			}
+
+			@Override
+			public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+				flag = true;
+				new GetDataTask().execute();
+			}
+		});
+
+		ListView actualListView = mPullRefreshListView.getRefreshableView();
+		// Need to use the Actual ListView when registering for Context Menu
+		registerForContextMenu(actualListView);
+
+		// 把view层对象ListView和控制器BaseAdapter关联起来
+		actualListView.setAdapter(myAdapter);
+		actualListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("trackbean", mList.get(position - 1));
+				setResult(RESULT_OK,intent);
+				finish();
+				overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			}
+		});
+		
+	}
+	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.choose_concern_travel);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+
+	}
+	private void getData() {
+		
+			person = new ArrayList<trackbean>();
+			// Variable variable=new Variable();
+			new Thread(new Runnable() {
+				String result;
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						Map<String, String> param = new HashMap<String, String>();
+						param.put("trackid", 0 + "");
+						getfavordongtairoute g = new getfavordongtairoute();
+						String jsonstring1 = g.getfavortrack(param);
+						if (jsonstring1 != null && jsonstring1.length() > 0) {
+							jsonstring = jsonstring1;
+							result = "1";
+						} else {
+							result = "0";
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+						result = "0";
+					} finally {
+						Log.i("result", result.toString());
+						Message message = new Message();
+						message.what = SHOW_RESPONSE_FIRST;
+						message.obj = result.toString();
+						handler.sendMessage(message);
+					}
+				}
+			}).start();
+		
+	}
+	private class GetDataTask extends AsyncTask<Void, Void, Object> {
+		int trackid;
+
+		// 子线程请求数据
+		@Override
+		protected ArrayList<trackbean> doInBackground(Void... params) {
+			// Simulates a background job.
+			// listreds=new ArrayList<redsbean>();
+			if (flag == false) {
+				new Thread(new Runnable() {
+					private String result;
+
+					@Override
+					public void run() {
+						try {
+							// TODO Auto-generated method stub
+							if (mList == null || mList.size() <= 0) {
+								trackid = 0;
+							} else {
+								trackid = mList.get(0).getTrack().getTrack_id();
+							}
+							Log.i("redsiddown", trackid + "");
+							Map<String, String> param = new HashMap<String, String>();
+							param.put("trackid", trackid + "");
+							getfavordongtairoute g = new getfavordongtairoute();
+							String jsonstring1 = g.getfavortrack(param);
+							Log.i("json", jsonstring1);
+							if (jsonstring1 != null && jsonstring1.length() > 0) {
+								jsonstring = jsonstring1;
+								Log.i("json", jsonstring);
+								result = 1 + "";
+							} else {
+								result = "0";
+								return;
+							}
+						} catch (Exception e) {
+							// TODO: handle exception
+							e.printStackTrace();
+							result = "2";
+						} finally {
+							Log.i("result", result.toString());
+							Message message = new Message();
+							message.what = SHOW_RESPONSE;
+							message.obj = result.toString();
+							handler.sendMessage(message);
+						}
+					}
+				}).start();
+				try {
+					Thread.sleep(3000);
+					return person;
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				}
+			} else if (flag == true) {
+				new Thread(new Runnable() {
+					private String result;
+
+					@Override
+					public void run() {
+						try {
+							if (mList == null || mList.size() <= 0) {
+								trackid = 0;
+							} else {
+								// TODO Auto-generated method stub
+								trackid = mList.get(mList.size() - 1).getTrack().getTrack_id();
+							}
+							Log.i("redsidup", trackid + "");
+							Map<String, String> param = new HashMap<String, String>();
+							param.put("trackid", trackid + "");
+							getfavordongtairoute getsourcebyhotFirstnet = new getfavordongtairoute();
+							String jsonstring1 = getsourcebyhotFirstnet.getfavorLtrack(param);
+							if (jsonstring1 != null && jsonstring1.length() > 0) {
+								jsonstring = jsonstring1;
+								Log.i("json", jsonstring);
+								result = 1 + "";
+							} else {
+								result = "0";
+								return;
+							}
+						} catch (Exception e) {
+							// TODO: handle exception
+							e.printStackTrace();
+							result = "2";
+						} finally {
+							Log.i("result", result.toString());
+							Message message = new Message();
+							message.what = SHOW_RESPONSE;
+							message.obj = result.toString();
+							handler.sendMessage(message);
+						}
+					}
+				}).start();
+				try {
+					Thread.sleep(3000);
+					return person;
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return null;
+				}
+			}
+			return null;
+		}
+
+		// 主线程更新UI
+		@Override
+		protected void onPostExecute(Object result) {
+			if (result != null) {
+				List<trackbean> listredsbean = (ArrayList<trackbean>) result;
+				if (flag == false) {
+					for (int i = listredsbean.size() - 1; i >= 0; i--) {
+						mList.addFirst(listredsbean.get(i));
+					}
+					Log.i("hou", 123 + "");
+				} else if (flag == true) {
+					for (int i = 0; i <= listredsbean.size() - 1; i++) {
+						mList.add(listredsbean.get(i));
+					}
+					Log.i("hou", 321 + "");
+				}
+				myAdapter.notifyDataSetChanged();
+				// 通知RefreshListView 我们已经更新完成
+				// Call onRefreshComplete when the list has been refreshed.
+				mPullRefreshListView.onRefreshComplete();
+				super.onPostExecute(result);
+			} else {
+				return;
+			}
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("按下了back键   onBackPressed()");
+		showPre();
+	}
+	public void showPre() {
+		// TODO Auto-generated method stub
+		finish();
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			showPre();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+}

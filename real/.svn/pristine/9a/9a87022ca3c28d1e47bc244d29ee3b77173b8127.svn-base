@@ -1,0 +1,27 @@
+package com.whut.net;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.domain.huifubean;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.entites.user;
+import com.whut.myMap.utils.httpclient;
+
+public class addCommentNet {
+	 public String addComment(huifubean hfbean){
+	    	try{
+	    	httpclient httpclient=new httpclient();
+	    	Gson gson=new Gson();
+			String string=gson.toJson(hfbean);
+			Map<String, String> param=new HashMap<String, String>();
+			param.put("huifuwords", string);
+			return httpclient.sendPost(new url().geturl()+"/servlet/addComment",param);
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    		throw new RuntimeException(e);	
+	    	}
+	    }	
+}

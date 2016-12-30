@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+     <item  
+        android:id="@+id/set"  
+        android:icon="@drawable/icon_nav_setting_white_20"  
+        android:showAsAction="always"  
+        android:title="编辑"/>  
+<item  
+        android:id="@+id/share"  
+         android:icon="@drawable/upload27"  
+        android:showAsAction="always"  
+        android:title="分享"/>  
+</menu>

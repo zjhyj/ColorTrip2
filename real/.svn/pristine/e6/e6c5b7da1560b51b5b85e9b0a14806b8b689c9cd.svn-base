@@ -1,0 +1,47 @@
+package com.whut.myMap.entites;
+
+import java.io.Serializable;
+
+public class net implements Serializable {
+	private int net_id;
+	private String word;
+	private int zan;
+	private String image;
+	public int getNet_id() {
+		return net_id;
+	}
+	public void setNet_id(int net_id) {
+		this.net_id = net_id;
+	}
+	public String getWord() {
+		return word;
+	}
+	public void setWord(String word) {
+		this.word = word;
+	}
+	public int getZan() {
+		return zan;
+	}
+	public void setZan(int zan) {
+		this.zan = zan;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public net(int net_id, String word, int zan, String image) {
+		super();
+		this.net_id = net_id;
+		this.word = word;
+		this.zan = zan;
+		this.image = image;
+	}
+	public net() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+
+}

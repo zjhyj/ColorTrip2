@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="60dp"
+    android:background="@drawable/infowindow"
+    android:orientation="vertical"
+    android:visibility="visible"
+    android:focusable="true"
+    >
+    <TextView 
+        
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/tab_normal_color"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:visibility="visible"
+    android:focusable="true"
+    >
+    <LinearLayout
+        android:id="@+id/good"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:clickable="true" 
+        android:layout_weight="1"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/star_good" />
+        <TextView
+            android:id="@+id/good_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:text="20"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="25dp"
+        android:background="#4fcccccc" 
+        android:layout_marginTop="22dp"/>
+
+    <LinearLayout
+        android:id="@+id/bad"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:clickable="true"
+        android:layout_weight="1"
+         >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/star_bad"
+             android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/bad_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:text="20"
+            android:textSize="18sp" />
+    </LinearLayout>
+  </LinearLayout>
+</LinearLayout>

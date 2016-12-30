@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:makeramen="http://schemas.android.com/apk/res/com.whut.myMap"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/bac" >
+    </ImageView>
+
+    <com.makeramen.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/head"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="130dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_launcher"
+        makeramen:border_color="@android:color/transparent"
+        makeramen:border_width="1dip"
+        makeramen:corner_radius="100dip" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="145dp"
+        android:layout_toRightOf="@id/head"
+        android:shadowColor="#ff000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="5"
+        android:text="yonghu"
+        android:textColor="@color/white"
+        android:textSize="17sp" />
+    <Button 
+        android:id="@+id/concern_btn"
+        android:layout_height="30dp"
+        android:layout_width="45dp"
+        android:background="@drawable/mini_btn_confirm_hover"
+      android:layout_alignParentRight="true"
+      android:layout_marginRight="10dp"
+        android:layout_marginTop="145dp"
+        android:text="关注"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+    
+    <LinearLayout
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="#8f000000"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="动态"
+            android:textColor="#ffffff" 
+            android:background="#3fffffff"/>
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center_vertical"
+            android:background="#7fffffff" />
+
+        <TextView
+            android:id="@+id/youji"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="游记"
+            android:textColor="#ffffff"
+            android:clickable="true" />
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center_vertical"
+            android:background="#7fffffff" />
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="个人信息"
+            android:textColor="#ffffff" 
+            android:clickable="true"/>
+    </LinearLayout>
+
+</RelativeLayout>

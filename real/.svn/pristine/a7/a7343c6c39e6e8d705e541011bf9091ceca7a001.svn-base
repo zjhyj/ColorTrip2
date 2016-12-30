@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+<item  
+        android:id="@+id/map"  
+        android:icon="@drawable/see_location"  
+        android:showAsAction="always"  
+        android:title="查看地图"/>  
+        
+</menu>
+

@@ -1,0 +1,47 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+public class ELparent implements Serializable {
+	private String num;
+	private int image;
+	private String title;
+
+	public int getImage() {
+		return image;
+	}
+
+	public void setImage(int image) {
+		this.image = image;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+
+	public String getNum() {
+		return num;
+	}
+
+	public void setNum(String num) {
+		this.num = num;
+	}
+
+	public ELparent(String num, int image, String title) {
+		super();
+		this.num = num;
+		this.image = image;
+		this.title = title;
+	}
+
+	public ELparent() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+}

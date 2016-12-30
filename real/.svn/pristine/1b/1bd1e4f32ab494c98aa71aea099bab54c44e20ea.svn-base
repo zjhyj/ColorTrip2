@@ -1,0 +1,141 @@
+package com.whut.myMap.fragment;
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.whut.myMap.R;
+import com.whut.myMap.Speak_Main_route;
+import com.whut.myMap.adapter.ListViewAdapter_speak_point;
+import com.whut.myMap.adapter.ListViewAdapter_speak_route;
+import com.whut.myMap.adapter.myroute;
+import com.whut.myMap.domain.TestRoute;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.speak;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.serverce.Redservice;
+import com.whut.myMap.serverce.trackservice;
+
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
+
+public class Footprint_route extends Fragment {
+	private List<trackbean> list;
+	private ListView listView;
+	private View mParent;
+	private FragmentActivity mActivity;
+	myroute myAdapter;
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+		View view=inflater.inflate(R.layout.listview_container, container, false);
+		return view;
+	}
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onActivityCreated(savedInstanceState);
+		mParent = getView();
+		mActivity = getActivity();
+		listView=(ListView) mParent.findViewById(R.id.fs_listview);
+		list=getData();
+		if(list==null){	
+			return;
+		}
+		myAdapter = new myroute(list,mActivity);
+		listView.setAdapter(myAdapter);
+		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				dialogdelete(position);
+				return true;
+			}
+		});
+		listView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(getActivity(), Speak_Main_route.class);
+				Bundle bundle=new Bundle();
+				bundle.putSerializable("speak_item1", list.get(position));
+				intent.putExtras(bundle);
+				startActivity(intent);
+				getActivity().overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
+			}
+		});
+	}
+	private void dialogdelete(final int position) {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder builder=new Builder(mActivity);
+		builder.setMessage("确定要删除该条记录吗？");
+		builder.setNegativeButton("取消", new OnClickListener() {		
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				return;
+			}
+		});
+		builder.setPositiveButton("确定", new OnClickListener() {	
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+			    trackservice service=new trackservice(mActivity);
+				service.deletetrack(mActivity,list.get(position).getTrack().getTrack_id());
+			    list.remove(position);
+			    myAdapter.notifyDataSetChanged();
+			}
+		});	
+		builder.create().show();
+	}
+	private ArrayList<trackbean> getData() {
+		ArrayList<trackbean> trackbeanlist=new ArrayList<trackbean>();
+		trackservice service=new trackservice(mActivity);
+		trackbeanlist=(ArrayList<trackbean>)service.gettrack(mActivity);
+		return trackbeanlist;
+	}
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		List<trackbean> listredsList = getData();
+		if (listredsList != null) {
+			try {
+				list.clear();
+				list.addAll(listredsList);
+				myAdapter.notifyDataSetChanged();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			if (list != null && myAdapter != null) {
+					try {
+						list.clear();
+						myAdapter.notifyDataSetChanged();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+		}
+	}
+}

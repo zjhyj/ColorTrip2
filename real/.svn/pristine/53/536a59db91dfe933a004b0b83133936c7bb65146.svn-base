@@ -1,0 +1,863 @@
+package com.whut.myMap.fragment;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.InfoWindow;
+import com.baidu.mapapi.map.MapPoi;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Overlay;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.SupportMapFragment;
+import com.baidu.mapapi.map.BaiduMap.OnMapClickListener;
+import com.baidu.mapapi.map.BaiduMap.OnMapDoubleClickListener;
+import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.baidu.mapapi.utils.DistanceUtil;
+import com.whut.myMap.Localreds;
+import com.whut.myMap.R;
+import com.whut.myMap.Savetrack;
+import com.whut.myMap.TakePhoto;
+import com.whut.myMap.sharetrack;
+import com.whut.myMap.domain.clusterpair;
+import com.whut.myMap.domain.net;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.cluster;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.track;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.serverce.trackservice;
+import com.whut.myMap.utils.MyOrientationListener;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.getcountnet;
+import com.whut.net.getlocalredsnet;
+import com.whut.net.loginnet;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Point;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.Settings;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.SearchView;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+public class MapFragment extends Fragment {
+	protected static final int SHOW_RESPONSE = 0;
+	protected static final int SHOW_RESPONSE_like = 1;
+	MapView mapView = null;
+	private View mParent;
+	SupportMapFragment map;
+	private FragmentActivity mActivity;
+	public BaiduMap baiduMap = null;
+	private View Mymarker;
+	public LocationClient locationClient = null;
+	public TextView text1;
+	public TextView text2;
+	public Button weixing;
+	public ImageButton jiaotong;
+	public ImageButton jiluguiji;
+	public ImageButton dingwei;
+	public ImageButton sousuo;
+	public ImageButton zengjia;
+	private static LatLng nowlocal;
+	private int flag;
+	// 自定义定位图标
+	private BitmapDescriptor mIconLocation;
+	private MyOrientationListener myOrientationListener;
+	LocationClient locationclient;
+	static boolean isrequest = false;
+	static boolean isFirstLoc = true;// 是否首次定位
+	static private boolean isjilu = false;
+	static private boolean isfirstjilu = true;
+	private static boolean iscontain = false;
+	private static boolean islong = false;
+	private static boolean isfirstsousuo = true;
+	static int trackid = 0;
+	static int like;
+	private String jsonstring;
+	static private List<lbs> lat;
+	private static List<LatLng> listlat;
+	private static String address;
+	private static List<Overlay> listoverlaylocal = new ArrayList<Overlay>();
+	private static List<Overlay> listoverlayjilu = new ArrayList<Overlay>();
+	BitmapDescriptor mCurrentMarker = null; // 自定义图标
+	BDLocationListener mylistener = new BDLocationListener() {
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			// TODO Auto-generated method stub
+			if (location == null) {
+				return;
+			}
+			MyLocationData locationdata = new MyLocationData.Builder()
+					.accuracy(location.getRadius())
+					.direction(location.getDerect())
+					.latitude(location.getLatitude())
+					.longitude(location.getLongitude()).build();
+			baiduMap.setMyLocationData(locationdata);
+			MyLocationConfiguration config = new MyLocationConfiguration(
+					MyLocationConfiguration.LocationMode.NORMAL, true,
+					mIconLocation);
+			baiduMap.setMyLocationConfigeration(config);
+			if (isFirstLoc || isrequest) {
+				LatLng firstloc = new LatLng(location.getLatitude(),
+						location.getLongitude());
+				MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(firstloc);
+				baiduMap.animateMapStatus(u);
+				isFirstLoc = false;
+				isrequest = false;
+			}
+			if (islong) {
+				nowlocal = new LatLng(location.getLatitude(),
+						location.getLongitude());
+				
+			}
+			if (isjilu) {
+				if (isfirstjilu) {
+					isfirstjilu = false;
+					LatLng L = new LatLng(location.getLatitude(),
+							location.getLongitude());
+					lat.add(new lbs(0, L.latitude, L.longitude, trackid,0));
+					listlat.add(new LatLng(L.latitude, L.longitude));
+					BitmapDescriptor bitmap = BitmapDescriptorFactory
+							.fromResource(R.drawable.icon_track_navi_end);
+					// 构建MarkerOption，用于在地图上添加Marker
+					OverlayOptions option = new MarkerOptions().position(L)
+							.icon(bitmap);
+					// 在地图上添加Marker，并显示
+					Overlay overlay = baiduMap.addOverlay(option);
+					listoverlayjilu.add(overlay);
+				} else{
+					LatLng L = new LatLng(location.getLatitude(),
+							location.getLongitude());
+					LatLng latlng=new LatLng(lat.get(lat.size()-1).getLbsx(), lat
+							.get(lat.size()-1).getLbsy());
+					if(DistanceUtil.getDistance(L, latlng)>20){
+						return;
+					}else{
+					if (iscontain) {
+						lat.add(new lbs(0, L.latitude, L.longitude, trackid,1));
+						listlat.add(new LatLng(L.latitude, L.longitude));
+						Log.i("iscontain", 1 + "");
+						iscontain = false;
+						Intent intent = new Intent(getActivity(),
+								TakePhoto.class);
+						intent.putExtra("trackid", trackid);
+						intent.putExtra("lat", L.latitude);
+						intent.putExtra("lon", L.longitude);
+						startActivity(intent);
+					} else {
+						lat.add(new lbs(0, L.latitude, L.longitude,trackid, 0));
+						listlat.add(new LatLng(L.latitude, L.longitude));
+						Log.i("iscontain", 0 + "");
+					}
+					if (lat.size() > 1) {
+				        OverlayOptions ooPolyline = new PolylineOptions().width(5)
+				                                .color(0x4B5CC400).points(listlat).visible(true);
+						listoverlayjilu.add(baiduMap.addOverlay(ooPolyline));
+					  }
+					}
+				}
+			}
+		}
+	};
+	/**
+	 * Create a new instance of DetailsFragment, initialized to show the text at
+	 * 'index'.
+	 */
+	public static MapFragment newInstance(int index) {
+		MapFragment f = new MapFragment();
+		// Supply index input as an argument.
+		Bundle args = new Bundle();
+		args.putInt("index", index);
+		f.setArguments(args);
+		return f;
+	}
+
+	public int getShownIndex() {
+		return getArguments().getInt("index", 0);
+	}
+
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		SDKInitializer.initialize(getActivity().getApplicationContext());
+
+		View view = inflater.inflate(R.layout.fragment_map, container, false);
+		return view;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		mActivity = getActivity();
+		mParent = getView();
+		mapView = (MapView) mParent.findViewById(R.id.bmapView);
+		Mymarker = mParent.findViewById(R.id.markerinfo);
+		mapView = (MapView) mParent.findViewById(R.id.bmapView);
+		mapView.removeViewAt(1);
+		baiduMap = mapView.getMap();
+		baiduMap.setMapType(baiduMap.MAP_TYPE_NORMAL);
+		baiduMap.setMyLocationEnabled(true);
+		locationClient = new LocationClient(getActivity()
+				.getApplicationContext());
+		locationClient.registerLocationListener(mylistener);
+		LocationClientOption option = new LocationClientOption();
+		option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);// 设置定位模式
+		option.setCoorType("bd09ll"); // 返回的定位结果是百度经纬度,默认值gcj02
+		option.setScanSpan(2000); // 设置发起定位请求的间隔时间为2000ms
+		option.setIsNeedAddress(true); // 返回的定位结果包含地址信息
+		option.setNeedDeviceDirect(true); // 返回的定位结果包含手机机头的方向
+		option.setOpenGps(true);
+		// 初始化图标
+		mIconLocation = BitmapDescriptorFactory.fromResource(R.drawable.follow);
+		myOrientationListener = new MyOrientationListener(mActivity);
+		myOrientationListener
+				.setOnOrientationListener(new com.whut.myMap.utils.MyOrientationListener.OnOrientationListener() {
+					public void onOrientationChanged(float x, float lastX) {
+						RotateAnimation ra = new RotateAnimation(lastX, -x,
+								Animation.RELATIVE_TO_SELF, 0.5f,
+								Animation.RELATIVE_TO_SELF, 0.5f);
+					}
+				});
+		locationClient.setLocOption(option);
+		locationClient.start(); // 开始定位
+		myOrientationListener.start();
+		LocationManager locationManager = (LocationManager) getActivity()
+				.getSystemService(Context.LOCATION_SERVICE);
+		if (!locationManager
+				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+			dialogopengps();
+		}
+		// button获取去设置监听事件
+		weixing = (Button) mParent.findViewById(R.id.weixing);
+		jiaotong = (ImageButton) mParent.findViewById(R.id.jiaotong);
+		jiluguiji = (ImageButton) mParent.findViewById(R.id.jiluguiji);
+		dingwei = (ImageButton) mParent.findViewById(R.id.dingwei);
+		sousuo = (ImageButton) mParent.findViewById(R.id.sousuo);
+		zengjia = (ImageButton) mParent.findViewById(R.id.zengjia);
+		weixing.setOnClickListener(new myweixing());
+		jiaotong.setOnClickListener(new myjiaotong());
+		jiluguiji.setOnClickListener(new myjiluguiji());
+		dingwei.setOnClickListener(new mydingwei());
+		sousuo.setOnClickListener(new mysousuo());
+		zengjia.setOnClickListener(new myzengjia());
+		baiduMap.setOnMapClickListener(new OnMapClickListener() {
+			@Override
+			public boolean onMapPoiClick(MapPoi arg0) {
+				return false;
+			}
+
+			@Override
+			public void onMapClick(LatLng arg0) {
+				Mymarker.setVisibility(View.GONE);
+				baiduMap.hideInfoWindow();
+			}
+		});
+		baiduMap.setOnMapDoubleClickListener(new OnMapDoubleClickListener() {
+
+			@Override
+			public void onMapDoubleClick(LatLng arg0) {
+				// TODO Auto-generated method stub
+             baiduMap.clear();
+			}
+		});
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+	}
+
+	public void dialogopengps() {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder builder = new Builder(getActivity());
+		builder.setMessage("开启GPS即可享受更加精确的定位服务！");
+		builder.setTitle("提示");
+		builder.setPositiveButton("确定",
+				new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(
+								Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						startActivityForResult(intent, 0); // 设置完成后返回到原来的界面
+						dialog.dismiss();
+					}
+				});
+		builder.setNegativeButton("取消",
+				new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+		builder.create().show();
+	}
+
+	public void dialogaddreds() {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder builder = new Builder(getActivity());
+		builder.setMessage("是否将此兴趣点添加在足迹上？");
+		builder.setTitle("提示");
+		builder.setPositiveButton("确定",
+				new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						iscontain = true;
+						locationClient.requestLocation();
+						dialog.dismiss();
+					}
+				});
+		builder.setNegativeButton("取消",
+				new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(getActivity(),
+								TakePhoto.class);
+						intent.putExtra("trackid", 0);
+						intent.putExtra("lat", 0);
+						intent.putExtra("lon", 0);
+						startActivity(intent);
+						dialog.dismiss();
+					}
+				});
+		builder.create().show();
+	}
+
+	public void dialoggps() {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder builder = new Builder(getActivity());
+		builder.setMessage("轨迹记录必须打开GPS，是否继续？");
+		builder.setTitle("提示");
+		builder.setPositiveButton("确定",
+				new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						// 转到手机设置界面，用户设置GPS
+						Intent intent = new Intent(
+								Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						startActivityForResult(intent, 0); // 设置完成后返回到原来的界面
+						dialog.dismiss();
+					}
+				});
+		builder.setNegativeButton("取消",
+				new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+		builder.create().show();
+	}
+
+	public void dialogtrack(final List<lbs> lat2) {
+		final trackservice service = new trackservice(mActivity);
+		AlertDialog.Builder builder = new Builder(getActivity());
+		builder.setTitle("提示：").setMessage("您想要分享或保存此次记录吗?");
+		builder.setPositiveButton("分享",
+				new android.content.DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method
+						if (lat2.size() < 2) {
+							Toast.makeText(getActivity(),
+									"所保存的路径点小于俩个，不能生成记录！", 0).show();
+							;
+							new trackservice(mActivity)
+									.deletemaxtrack(mActivity);
+							return;
+						}
+						service.addlbs(lat2, mActivity);
+						trackbean trackbean = service.gettrack(mActivity,
+								trackid);
+						if (trackbean == null) {
+							Log.i("id", "kong");
+						}
+						Intent intent = new Intent(mActivity, sharetrack.class);
+						Bundle bundle = new Bundle();
+						bundle.putSerializable("trackbean", trackbean);
+						intent.putExtras(bundle);
+						startActivity(intent);
+						dialog.dismiss();
+					}
+				});
+		builder.setNegativeButton("保存",
+				new android.content.DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						if (lat2.size() < 2) {
+							Toast.makeText(getActivity(),
+									"所保存的路径点小于俩个，不能生成记录！", 0).show();
+							;
+							new trackservice(mActivity)
+									.deletemaxtrack(mActivity);
+							return;
+						}
+						service.addlbs(lat2, mActivity);
+						Log.i("trackid1", trackid + "");
+						Intent intent = new Intent(mActivity, Savetrack.class);
+						intent.putExtra("trackid", trackid);
+						startActivity(intent);
+						trackid = 0;
+						dialog.dismiss();
+					}
+				});
+		builder.setNeutralButton("不保存",
+				new android.content.DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						dialog.dismiss();
+						return;
+					}
+				});
+		builder.create().show();
+	}
+
+	public class myweixing implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			if (flag == 0) {
+				flag++;
+				baiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
+				weixing.setText("卫");
+				Toast.makeText(getActivity(), "卫星图", 0).show();
+			} else if (flag == 1) {
+				flag = 0;
+				baiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
+				weixing.setText("普");
+				Toast.makeText(getActivity(), "普通图", 0).show();
+			}
+		}
+	}
+
+	public class myjiaotong implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			if (baiduMap.isTrafficEnabled()) {
+				baiduMap.setTrafficEnabled(false);
+				jiaotong.setImageResource(R.drawable.track_icon_timeline_car);
+				Toast.makeText(getActivity(), "关闭交通图", 0).show();
+			} else {
+				baiduMap.setTrafficEnabled(true);
+				jiaotong.setImageResource(R.drawable.track_icon_timeline_car_sync);
+				Toast.makeText(getActivity(), "打开交通图", 0).show();
+			}
+		}
+	}
+
+	public class myjiluguiji implements OnClickListener {
+		trackservice service = new trackservice(mActivity);
+
+		@Override
+		public void onClick(View v) {
+			if (!isjilu) {
+				LocationManager locationManager = (LocationManager) getActivity()
+						.getSystemService(Context.LOCATION_SERVICE);
+				if (!locationManager
+						.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+					dialoggps();
+				}
+				if (locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) 
+				{
+					isjilu = true;
+					isfirstjilu = true;
+					lat = new ArrayList<lbs>();
+					listlat=new ArrayList<LatLng>();
+					jiluguiji.setImageResource(R.drawable.track_icon_timeline_custom_sync);
+					trackservice trackservice = new trackservice(mActivity);
+					Date date = new Date();
+					SimpleDateFormat format = new SimpleDateFormat(
+							"yyyy-MM-dd HH:mm:ss");
+					String str = format.format(date);
+					trackid = trackservice.addtrack(new track(0, 0, null, str,
+							1,0,null), mActivity);
+					Log.i("trackidfir", trackid + "");
+					if (locationClient != null && locationClient.isStarted()) {
+						isrequest = true;
+						locationClient.requestLocation();
+					}
+					Toast.makeText(getActivity(), "打开足迹记录", 0).show();
+				} else {
+					return;
+				}
+			} else {
+				isjilu = false;
+				isfirstjilu = true;
+				jiluguiji.setImageResource(R.drawable.track_icon_timeline_custom);
+				Toast.makeText(getActivity(), "关闭足迹记录", 0).show();
+				dialogtrack(lat);
+				for (Overlay overlay : listoverlayjilu) {
+					overlay.remove();
+				}
+				listoverlayjilu = new ArrayList<Overlay>();
+
+			}
+		}
+	}
+
+	public class mydingwei implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			if (locationClient != null && locationClient.isStarted()) {
+				isrequest = true;
+				locationClient.requestLocation();
+			}
+		}
+	}
+
+	private void getData(final LatLng ne, final LatLng sw) {
+		// Variable variable=new Variable();
+		new Thread(new Runnable() {
+			String result;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					getlocalredsnet getlocalredsnet = new getlocalredsnet();
+					String jsonstring1 = getlocalredsnet.getlocal(ne, sw);
+					if (jsonstring1 != null && jsonstring1.length() > 0) {
+						jsonstring = jsonstring1;
+						result = "1";
+					} else {
+						result = "0";
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					result = "2";
+				} finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = SHOW_RESPONSE;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if (Integer.parseInt((String) msg.obj) == 1) {
+					Log.i("zai", "enene");
+					Log.i("zai", "enene3");
+					gsonutil gson = new gsonutil();
+					Log.i("json", jsonstring);
+					List<clusterpair> person = (ArrayList<clusterpair>) gson
+							.fromJsonList(jsonstring, clusterpair.class);
+					show(person);
+				} else if (Integer.parseInt((String) msg.obj) == 0) {
+					Toast.makeText(getActivity(), "附近没有热点哦！", 0).show();
+					return;
+				} else {
+					Toast.makeText(getActivity(), "网络异常！", 0).show();
+				}
+			case SHOW_RESPONSE_like:
+				like = Integer.parseInt((String) msg.obj);
+			}
+		}
+	};
+
+	public void show(List<clusterpair> person) {
+		try {
+			for (int i = 0; i < person.size() - 1; i++) {
+				List<LatLng> list = new ArrayList<LatLng>();
+				clusterpair clu = person.get(i);
+				LatLng lat = new LatLng(clu.getPx(), clu.getPy());
+				LatLng lat2 = new LatLng(clu.getLx(), clu.getLy());
+				if (clu.getIscontain() == 1) {
+					BitmapDescriptor bitmap = BitmapDescriptorFactory
+							.fromResource(R.drawable.flag);
+					// 构建MarkerOption，用于在地图上添加Marker
+					OverlayOptions option = new MarkerOptions().position(lat)
+							.icon(bitmap);
+					// 在地图上添加Marker，并显示
+					listoverlaylocal.add(baiduMap.addOverlay(option));
+					// 在地图上添加Marker，并显示
+					Marker marker = (Marker) (baiduMap.addOverlay(option));
+					Bundle bundle = new Bundle();
+					bundle.putSerializable(
+							"red",
+							new cluster(clu.getLclusterid(), clu.getLx(), clu
+									.getLy()));
+					marker.setExtraInfo(bundle);
+				}
+//				list.add(new LatLng(lat.latitude, lat.longitude));
+//				list.add(new LatLng(lat2.latitude, lat2.longitude));
+//				OverlayOptions polygonOption = new PolylineOptions().width(5).color(0xCA6924).points(list).visible(true);
+////				Polyline overlay = (Polyline) 
+//				System.out.println(list.size());
+//				System.out.println(list.get(0).latitude+" "+list.get(1).latitude);
+//			    baiduMap.addOverlay(polygonOption);
+			    List<LatLng> demo=new ArrayList<LatLng>();
+		        demo.add(new LatLng(lat.latitude,lat.longitude));
+		        demo.add(new LatLng(lat2.latitude,lat2.longitude));
+		        OverlayOptions ooPolyline = new PolylineOptions().width(5)
+		                                .color(0xAAFF0000).points(demo).visible(true);
+//		                baiduMap.addOverlay(ooPolyline);
+				listoverlaylocal.add(baiduMap.addOverlay(ooPolyline));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		baiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				// TODO Auto-generated method stub
+				final cluster red = (cluster) marker.getExtraInfo().get("red");
+				InfoWindow mInfoWindow=null;
+				View popview = LayoutInflater.from(mActivity).inflate(
+						R.layout.infowindow, null);
+				popupInfo(popview, red);
+//				baiduMap.hideInfoWindow();
+				// 将marker所在的经纬度的信息转化成屏幕上的坐标
+				final LatLng ll = marker.getPosition();
+				 mInfoWindow = new InfoWindow(popview, ll, -47);
+				// 显示InfoWindow
+				baiduMap.showInfoWindow(mInfoWindow);
+				popview.setVisibility(View.INVISIBLE);
+				return true;
+			}
+
+			private void popupInfo(View mymarker, final cluster red) {
+				// TODO Auto-generated method stub
+				ViewHolder viewHolder = null;
+				final TextView address = (TextView) mymarker
+						.findViewById(R.id.address);
+				if (mymarker.getTag() == null) {
+					viewHolder = new ViewHolder();
+					viewHolder.length = (TextView) mymarker
+							.findViewById(R.id.length);
+					viewHolder.like = (TextView) mymarker
+							.findViewById(R.id.like);
+					viewHolder.more = (TextView) mymarker
+							.findViewById(R.id.more);
+					mymarker.setTag(viewHolder);
+				}
+				viewHolder = (ViewHolder) mymarker.getTag();
+				GeoCoder geo = GeoCoder.newInstance();
+				OnGetGeoCoderResultListener listener = new OnGetGeoCoderResultListener() {
+					// 反地理编码查询结果回调函数
+					@Override
+					public void onGetReverseGeoCodeResult(
+							ReverseGeoCodeResult result) {
+						if (result == null
+								|| result.error != SearchResult.ERRORNO.NO_ERROR) {
+							// 没有检测到结果
+							return;
+						}
+						address.setText(result.getAddress());
+						System.out.println(address);
+					}
+
+					// 地理编码查询结果回调函数
+					@Override
+					public void onGetGeoCodeResult(GeoCodeResult result) {
+						if (result == null
+								|| result.error != SearchResult.ERRORNO.NO_ERROR) {
+							// 没有检测到结果
+						}
+					}
+				};
+				geo.setOnGetGeoCodeResultListener(listener);
+				geo.reverseGeoCode(new ReverseGeoCodeOption()
+						.location(new LatLng(red.getX(), red.getY())));
+				Log.i("clusterid", red.getClusterid() + "" + address + " "
+						+ red.getX() + "  " + red.getY());
+				while (true) {
+					if (locationClient != null && locationClient.isStarted()) {
+						islong = true;
+						locationClient.requestLocation();
+						// System.out.println(nowlocal.latitude+nowlocal.longitude);
+						viewHolder.length.setText(""
+								+ (int) DistanceUtil.getDistance(nowlocal,
+										new LatLng(red.getX(), red.getY()))+"米");
+						islong=false;
+						break;
+					}
+				}
+				getcount(red.getClusterid());
+				viewHolder.like.setText(like + "");
+				viewHolder.more.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Intent intent = new Intent(getActivity(),
+								Localreds.class);
+						intent.putExtra("clusterid", red.getClusterid());
+						startActivity(intent);
+					}
+				});
+
+			}
+		});
+	}
+
+	private void getcount(final int clusterid) {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			String result;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					getcountnet getcountnet = new getcountnet();
+					result = getcountnet.getlocal(clusterid);
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+					result = "99999";
+				} finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = SHOW_RESPONSE_like;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+
+	public class mysousuo implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			if (isfirstsousuo) {
+				isfirstsousuo=false;
+				int b = mapView.getBottom();
+				int t = mapView.getTop();
+				int r = mapView.getRight();
+				int l = mapView.getLeft();
+				LatLng ne = baiduMap.getProjection().fromScreenLocation(
+						new Point(r, t));
+				LatLng sw = baiduMap.getProjection().fromScreenLocation(
+						new Point(l, b));
+				getData(ne, sw);
+			} else {
+				isfirstsousuo=true;
+				for (Overlay overlay : listoverlaylocal) {
+					overlay.remove();
+				}
+				listoverlaylocal = new ArrayList<Overlay>();
+			}
+		}
+	}
+
+	class ViewHolder {
+		TextView address;
+		TextView length;
+		TextView like;
+		TextView more;
+	}
+
+	public class myzengjia implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			if (isjilu) {
+				dialogaddreds();
+			} else {
+				Intent intent = new Intent(getActivity(), TakePhoto.class);
+				intent.putExtra("trackid", 0);
+				intent.putExtra("lat", 0);
+				intent.putExtra("lon", 0);
+				startActivity(intent);
+			}
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		// 在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+		locationClient.stop();
+		myOrientationListener.stop();
+		baiduMap.setMyLocationEnabled(false);
+		baiduMap.clear();
+		// TODO Auto-generated method stub
+		mapView.onDestroy();
+		mapView = null;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		// 在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
+		mapView.onResume();
+		locationClient.start();
+		myOrientationListener.start();
+	}
+
+	public void onstart() {
+		super.onStart();
+		locationClient.start();
+		myOrientationListener.start();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		// 在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
+		mapView.onPause();
+	}
+
+	public void onStop() {
+		super.onStop();
+		locationClient.stop();
+		myOrientationListener.stop();
+	}
+}

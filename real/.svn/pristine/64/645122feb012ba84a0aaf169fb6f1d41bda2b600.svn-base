@@ -1,0 +1,47 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+public class service implements Serializable {
+	private int id;
+	private  int type;
+	private  double comx;
+	private double comy;
+	public service(int id, int type, double comx, double comy) {
+		super();
+		this.id = id;
+		this.type = type;
+		this.comx = comx;
+		this.comy = comy;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	public double getComx() {
+		return comx;
+	}
+	public void setComx(double comx) {
+		this.comx = comx;
+	}
+	public double getComy() {
+		return comy;
+	}
+	public void setComy(double comy) {
+		this.comy = comy;
+	}
+	public service() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+}

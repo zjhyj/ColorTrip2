@@ -1,0 +1,236 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.github.glomadrian.dashedcircularprogress.DashedCircularProgress;
+import com.github.glomadrian.dashedcircularprogress.utils.ViewPagerTransformer;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.whut.myMap.adapter.ListViewAdapter_speak_route;
+import com.whut.myMap.adapter.ScollListView;
+import com.whut.myMap.domain.listtracklbs;
+import com.whut.myMap.domain.service;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.getservicelbsnet;
+
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class CalculateActivity extends FragmentActivity {
+	private ViewPager viewPager;
+	private DashedCircularProgress dashedCircularProgress;
+	View rl;
+	private static int length;
+	private static int track;
+	private static int rank;
+	protected String jsonstring;
+	protected String result;
+	
+	@SuppressLint("NewApi")
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.dash);
+		Intent intent=getIntent();
+		length=intent.getIntExtra("length", 0);
+		track=intent.getIntExtra("track", 0);
+		rank=intent.getIntExtra("rank", 0);
+		dashedCircularProgress = (DashedCircularProgress) findViewById(R.id.simple);
+		viewPager = (ViewPager) findViewById(R.id.circular_view_pager);
+		viewPager.setPageTransformer(true, new ViewPagerTransformer());
+		viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+		rl = findViewById(R.id.rl);
+		Mile();
+		transform(100,  "#FFFAFA", "#FFFAFA", "#df336633");
+		viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+				// Empty
+			}
+//			dashedCircularProgress.setExternalColor(Color.parseColor(color1));
+//			dashedCircularProgress.setProgressColor(Color.parseColor(color2));
+//			animateBackgroundColor(Color.parseColor(color3));
+			@Override
+			public void onPageSelected(int position) {
+				if (position == 0) {
+					dashedCircularProgress.reset();
+					Mile();
+					transform(100,  "#FFFAFA", "#FFFAFA", "#df336633");
+				} else if (position == 1) {
+					dashedCircularProgress.reset();
+					DongTai();
+					transform(100, "#F0E68C", "#F0E68C", "#df663366");
+				}else if (position == 2) {
+					dashedCircularProgress.reset();
+					Goal();
+					transform(100, "#FFFAFA", "#FFFAFA", "#dfff6600");
+				}
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+				// Empty
+			}
+		});
+
+	}
+
+	private void Mile() {
+		dashedCircularProgress.setIcon(R.drawable.strong);
+		// dashedCircularProgress.setValue(46);
+	}
+
+	private void DongTai() {
+		dashedCircularProgress.setIcon(R.drawable.ic_public_white_48dp);
+		// dashedCircularProgress.setValue(68);
+	}
+	private void Goal() {
+		dashedCircularProgress.setIcon(R.drawable.star);
+		// dashedCircularProgress.setValue(68);
+	}
+
+	private class PagerAdapter extends FragmentPagerAdapter {
+
+		public PagerAdapter(FragmentManager fragmentManager) {
+			super(fragmentManager);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			switch (position) {
+			case 0:
+				return new MileFragment();
+			case 1:
+				return new DongTaiFragment();
+			case 2:
+				return new GoalFragment();
+			}
+
+			return new MileFragment();
+		}
+
+		@Override
+		public int getCount() {
+			return 3;
+		}
+	}
+
+	public static class MileFragment extends Fragment {
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			return inflater.inflate(R.layout.goal_viewpager, container, false);
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			// TODO Auto-generated method stub
+			super.onActivityCreated(savedInstanceState);
+			View view=getView();
+			TextView num=(TextView) view.findViewById(R.id.num);
+			TextView word=(TextView) view.findViewById(R.id.word);
+			num.setText(length+"");
+			word.setText("总里程/m");
+		}
+	}
+
+	public static class DongTaiFragment extends Fragment {
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			return inflater.inflate(R.layout.goal_viewpager, container, false);
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			// TODO Auto-generated method stub
+			super.onActivityCreated(savedInstanceState);
+			View view=getView();
+			TextView num=(TextView) view.findViewById(R.id.num);
+			TextView word=(TextView) view.findViewById(R.id.word);
+			num.setText(track+"");
+			word.setText("分享动态");
+		}
+	}
+
+	public static class GoalFragment extends Fragment {
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			return inflater.inflate(R.layout.goal_viewpager, container, false);
+		}
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			// TODO Auto-generated method stub
+			super.onActivityCreated(savedInstanceState);
+			View view=getView();
+			TextView num=(TextView) view.findViewById(R.id.num);
+			TextView word=(TextView) view.findViewById(R.id.word);
+			num.setText(rank+"");
+			word.setText("用户排名");
+		}
+	}
+
+
+	private void transform(int value, String color1, String color2, String color3) {
+		dashedCircularProgress.setValue(value);
+		try {
+			dashedCircularProgress.setExternalColor(Color.parseColor(color1));
+			dashedCircularProgress.setProgressColor(Color.parseColor(color2));
+			animateBackgroundColor(Color.parseColor(color3));
+
+		} catch (NullPointerException e) {
+		}
+	}
+
+	private void animateBackgroundColor(int color) {
+		int previousColor = Color.TRANSPARENT;
+		Drawable background = rl.getBackground();
+
+		if (background instanceof ColorDrawable)
+			previousColor = ((ColorDrawable) background).getColor();
+
+		final ObjectAnimator animator = ObjectAnimator.ofInt(rl, "backgroundColor", previousColor, color)
+				.setDuration(1000);
+		animator.setEvaluator(new ArgbEvaluator());
+		animator.start();
+	}@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("按下了back键   onBackPressed()");
+		showPre();
+	}
+	public void showPre() {
+		// TODO Auto-generated method stub
+		finish();
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+}

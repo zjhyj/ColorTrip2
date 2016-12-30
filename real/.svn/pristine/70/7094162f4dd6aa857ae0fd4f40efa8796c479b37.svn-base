@@ -1,0 +1,76 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+
+public class service implements Serializable {
+	private int id;
+	private  int type;
+	private  double comx;
+	private double comy;
+	private int user_id;
+	private int like;
+	private int dislike; 
+	
+	public service(int id, int type, double comx, double comy, int user_id,
+			int like, int dislike) {
+		super();
+		this.id = id;
+		this.type = type;
+		this.comx = comx;
+		this.comy = comy;
+		this.user_id = user_id;
+		this.like = like;
+		this.dislike = dislike;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	public double getComx() {
+		return comx;
+	}
+	public void setComx(double comx) {
+		this.comx = comx;
+	}
+	public double getComy() {
+		return comy;
+	}
+	public void setComy(double comy) {
+		this.comy = comy;
+	}
+	
+	public int getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
+	}
+	
+	public int getLike() {
+		return like;
+	}
+	public void setLike(int like) {
+		this.like = like;
+	}
+	public int getDislike() {
+		return dislike;
+	}
+	public void setDislike(int dislike) {
+		this.dislike = dislike;
+	}
+	public service() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+}

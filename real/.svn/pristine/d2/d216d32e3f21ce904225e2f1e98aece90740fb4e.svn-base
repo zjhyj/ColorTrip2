@@ -1,0 +1,123 @@
+package com.whut.myMap.adapter;
+
+import java.util.List;
+
+import com.baidu.android.common.logging.Log;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.R;
+import com.whut.myMap.Speak_Main;
+import com.whut.myMap.domain.comment_message;
+
+import android.R.integer;
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
+import android.net.Uri;
+import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class CommentListViewAdapter_speak extends BaseAdapter{
+	private List<comment_message> mList;
+	private Context mContext;
+private int dongtai_user_id;
+	public CommentListViewAdapter_speak(List<comment_message> mList,int dongtai_user_id, Context mContext) {
+		super();
+		this.mList = mList;
+		this.mContext = mContext;
+		this.dongtai_user_id=dongtai_user_id;
+	}
+
+	
+	@Override
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return mList.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder holder ;
+		if (convertView == null) {
+			holder = new ViewHolder();
+			LayoutInflater mInflater = LayoutInflater.from(mContext);
+			convertView = mInflater.inflate(R.layout.comment_item, null);
+			holder.ImageView = (ImageView) convertView
+					.findViewById(R.id.imgHead);
+			holder.name = (TextView) convertView.findViewById(R.id.tvName);
+			holder.date = (TextView) convertView.findViewById(R.id.tvDate);
+			holder.content = (TextView) convertView
+					.findViewById(R.id.tvContent);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		
+		if (mList != null&&mList.size()!=0) {
+			comment_message sp = mList.get(position);
+			if (holder.ImageView != null) {
+				// …Ë÷√Õº∆¨
+				if (sp.getHuifu_user_image() == null) {
+					holder.ImageView.setImageBitmap(BitmapFactory
+							.decodeResource(mContext.getResources(),
+									R.drawable.default_head));
+				}
+				else {
+					DisplayImageOptions options = new DisplayImageOptions.Builder()//
+					.showImageOnLoading(R.drawable.loadpic) // º”‘ÿ÷–œ‘ æµƒƒ¨»œÕº∆¨
+					.showImageOnFail(R.drawable.loadfailed) // …Ë÷√º”‘ÿ ß∞‹µƒƒ¨»œÕº∆¨
+					.cacheInMemory(true) // ƒ⁄¥Êª∫¥Ê
+					.cacheOnDisk(true) // sdcardª∫¥Ê
+					.bitmapConfig(Config.RGB_565)// …Ë÷√◊ÓµÕ≈‰÷√
+					.build();//
+			ImageLoader.getInstance().displayImage(sp.getHuifu_user_image(),
+					holder.ImageView, options);
+		}
+			}
+			if (holder.name != null) {
+				String username=sp.getHuifu_user_name();
+				
+				holder.name.setText(username);
+				Log.i("username", sp.getHuifu_user_name()+sp.getHuifuwords());
+				
+			}
+			if (holder.date != null) {
+				holder.date.setText(sp.getDate().substring(0, 16));
+			}
+			if (holder.content != null) {
+				if(sp.getCeduserid()!=0){
+					System.out.println(sp.getCeduserid()+"   "+dongtai_user_id);
+				holder.content.setText(Html.fromHtml("ªÿ∏¥"+"<font color='#3366cc'>"+"@"+sp.getCedusername()+"</font>"+":"+sp.getHuifuwords()));
+				}else {
+					holder.content.setText(sp.getHuifuwords());
+				}
+			}
+			
+		}
+		return convertView;
+	}
+	public final class ViewHolder {
+		public ImageView ImageView;
+		public TextView name;
+		public TextView date;
+		public TextView content;
+	}
+	 
+}

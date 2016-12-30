@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".HomeActivity" >
+
+    <RelativeLayout
+        android:id="@+id/speak"
+        android:layout_width="fill_parent"
+        android:layout_height="53dp"
+        android:orientation="horizontal" 
+        android:background="@drawable/top_background">
+        
+        
+           <ImageButton
+            android:id="@+id/serch"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="1dp"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/add_speak_btn" />
+
+
+        <ImageButton
+            android:id="@+id/add_speak_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="1dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:scaleType="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/add_speak_btn" />
+
+      
+        <Spinner
+            android:id="@+id/speak_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            style="@style/spinner_style"
+            android:layout_gravity="center_vertical"/>
+        <ImageView 
+            android:layout_toRightOf="@id/speak_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/market_sng_floatview_popwindow_arrow_bottom"
+          android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+</RelativeLayout>

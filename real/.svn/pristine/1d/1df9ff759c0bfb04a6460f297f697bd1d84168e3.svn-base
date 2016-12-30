@@ -1,0 +1,34 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+public class dongtaipointbean implements Serializable {
+
+	private redsbean reds;
+	private List<comment_message> huifu;
+	public redsbean getReds() {
+		return reds;
+	}
+	public void setReds(redsbean reds) {
+		this.reds = reds;
+	}
+	public List<comment_message> getHuifu() {
+		return huifu;
+	}
+	public void setHuifu(List<comment_message> huifu) {
+		this.huifu = huifu;
+	}
+	public dongtaipointbean(redsbean reds, List<comment_message> huifu) {
+		super();
+		this.reds = reds;
+		this.huifu = huifu;
+	}
+	public dongtaipointbean() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+}

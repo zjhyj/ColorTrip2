@@ -1,0 +1,48 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+public class adviserselect implements Serializable{
+ private int adv_select_id;
+ private int user_id;
+ private int adviser_id;
+ private String servetime;
+public int getAdv_select_id() {
+	return adv_select_id;
+}
+public void setAdv_select_id(int adv_select_id) {
+	this.adv_select_id = adv_select_id;
+}
+public int getUser_id() {
+	return user_id;
+}
+public void setUser_id(int user_id) {
+	this.user_id = user_id;
+}
+public int getAdviser_id() {
+	return adviser_id;
+}
+public void setAdviser_id(int adviser_id) {
+	this.adviser_id = adviser_id;
+}
+
+public String getServetime() {
+	return servetime;
+}
+public void setServetime(String servetime) {
+	this.servetime = servetime;
+}
+public adviserselect() {
+	super();
+	// TODO Auto-generated constructor stub
+}
+public adviserselect(int adv_select_id, int user_id, int adviser_id,
+		String servetime) {
+	super();
+	this.adv_select_id = adv_select_id;
+	this.user_id = user_id;
+	this.adviser_id = adviser_id;
+	this.servetime = servetime;
+}
+ 
+}

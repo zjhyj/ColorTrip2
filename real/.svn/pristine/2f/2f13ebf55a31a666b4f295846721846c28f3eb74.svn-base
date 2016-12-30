@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+   <com.baidu.mapapi.map.MapView  
+    android:id="@+id/bmapView"  
+    android:layout_width="fill_parent"  
+    android:layout_height="fill_parent"  
+    android:clickable="true" />
+ <ImageButton
+    android:id="@+id/weixing"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_alignRight="@id/bmapView"
+    android:layout_alignTop="@id/bmapView"
+  android:src="@drawable/main_icon_maplayers"
+    android:scaleType="fitXY"
+    android:background="@drawable/map_btn"/>
+<ImageButton
+    android:id="@+id/jiaotong"
+    android:layout_width="40dp"
+  android:layout_height="40dp"
+  android:layout_centerInParent="true"
+    android:layout_below="@id/weixing"
+    android:layout_alignRight="@id/bmapView"
+    android:src="@drawable/main_icon_roadcondition_off"
+    android:scaleType="fitXY"
+    android:background="@drawable/map_btn"/>
+<ImageButton 
+    android:id="@+id/jiluguiji"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_below="@id/jiaotong"
+    android:layout_alignRight="@id/bmapView"
+      android:scaleType="fitXY"
+      
+      android:src="@drawable/track_icon_timeline_custom"
+       android:background="@drawable/map_btn"  />
+
+<ImageButton
+    android:id="@+id/dingwei"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_alignBottom="@id/bmapView"
+    android:layout_alignLeft="@id/bmapView"
+    android:layout_marginBottom="21dp"
+    android:layout_marginLeft="14dp" 
+    android:scaleType="centerInside"
+    android:src="@drawable/ic_track_explore_loc_focus"/>
+<ImageButton 
+    android:id="@+id/sousuo"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_below="@id/jiluguiji"
+    android:layout_alignRight="@id/bmapView"
+            android:scaleType="fitXY"
+            android:src="@drawable/icon_4_d"
+ android:background="@drawable/map_btn"/>
+<ImageButton 
+    android:id="@+id/zengjia"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_below="@id/sousuo"
+    android:layout_alignRight="@id/bmapView"
+    android:src="@drawable/take_photo"
+    android:scaleType="fitXY"
+   android:background="@drawable/map_btn"/>
+
+<LinearLayout
+    android:id="@+id/markerinfo"
+    android:layout_width="fill_parent"
+    android:layout_height="220dp"
+    android:layout_alignParentBottom="true"
+    android:background="#CC4e5a6b"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:visibility="gone" >
+    <ImageView
+        android:id="@+id/info_img"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:alpha="1.0"
+        android:clickable="true"
+        android:scaleType="fitXY" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal" > 
+            <TextView
+                android:id="@+id/info_name"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:ellipsize="end"
+                android:singleLine="false"
+                android:text="老米家泡馍小炒"
+                android:textColor="#FFF5EB" 
+                android:layout_weight="1.5"/>
+            <ImageView
+                android:id="@+id/zan"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_weight="0.5"/>
+            <TextView
+                android:id="@+id/info_zan"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:text="652"
+                android:textColor="#FFF5EB" 
+                android:layout_weight="0.5"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="0dp"
+        android:orientation="horizontal"
+     >
+        <Button
+            android:id="@+id/gothere"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="0dp"
+            android:text="@string/_go" 
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/concreat"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="0dp"
+            android:layout_weight="1"
+            android:text="@string/_xiangqing" />
+    </LinearLayout>
+</LinearLayout>
+  
+</RelativeLayout>

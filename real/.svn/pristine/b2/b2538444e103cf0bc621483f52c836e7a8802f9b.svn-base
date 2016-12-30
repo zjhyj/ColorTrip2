@@ -1,0 +1,246 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.whut.myMap.adapter.ConcernListAdapter;
+import com.whut.myMap.domain.concernview;
+import com.whut.myMap.domain.medal;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.changeConcern;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+public class MedalActivity extends Activity{
+	protected static final int SHOW_RESPONSE = 0;
+	private ActionBar mActionBar;
+	private medal medal;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.medal_activity);
+		Intent intent=getIntent();
+		Bundle bundle = intent.getExtras();
+		medal = (medal) bundle.getSerializable("medal");
+		TextView travel=(TextView) findViewById(R.id.tv1);
+		TextView tv2=(TextView) findViewById(R.id.tv2);
+		TextView tv3=(TextView) findViewById(R.id.tv3);
+		TextView tv4=(TextView) findViewById(R.id.tv4);
+		TextView tv5=(TextView) findViewById(R.id.tv5);
+		TextView tv6=(TextView) findViewById(R.id.tv6);
+		TextView tv7=(TextView) findViewById(R.id.tv7);
+		TextView tv8=(TextView) findViewById(R.id.tv8);
+		TextView tv9=(TextView) findViewById(R.id.tv9);
+		travel.setText("LV "+calTravels()+"");
+		tv2.setText("LV "+calCity()+"");
+		tv3.setText("LV "+calComm()+"");
+		tv4.setText("LV "+calSumlength()+"");
+		tv5.setText("LV "+calMaxzannum()+"");
+		tv6.setText("LV "+calSumzannum()+"");
+		tv7.setText("LV "+calConcernnum()+"");
+		tv8.setText("LV "+calShoucangnum()+"");
+		tv9.setText("LV "+calScorenum()+"");
+	}
+	private int calTravels(){
+		int travel=medal.getTracknum();
+		if (travel>=100) {
+			return 5;
+		} else if (travel>=50) {
+			return 4;
+		}else if (travel>=20) {
+			return 3;
+		}else if (travel>=5) {
+			return 2;
+		}else if (travel>=1) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	private int calCity(){
+		int travel=medal.getLocalnum();
+		if (travel>=50) {
+			return 5;
+		} else if (travel>=20) {
+			return 4;
+		}else if (travel>=10) {
+			return 3;
+		}else if (travel>=5) {
+			return 2;
+		}else if (travel>=2) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	private int calComm(){
+		int travel=medal.getCommnum();
+		if (travel>=50) {
+			return 5;
+		} else if (travel>=20) {
+			return 4;
+		}else if (travel>=10) {
+			return 3;
+		}else if (travel>=5) {
+			return 2;
+		}else if (travel>=1) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	private int calSumlength(){
+		double travel=medal.getSumlength();
+		if (travel>=100000) {
+			return 5;
+		} else if (travel>=50000) {
+			return 4;
+		}else if (travel>=10000) {
+			return 3;
+		}else if (travel>=5000) {
+			return 2;
+		}else if (travel>=1000) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	private int calMaxzannum(){
+		double travel=medal.getMaxzannum();
+		if (travel>=3000) {
+			return 5;
+		} else if (travel>=1000) {
+			return 4;
+		}else if (travel>=500) {
+			return 3;
+		}else if (travel>=100) {
+			return 2;
+		}else if (travel>=10) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	private int calSumzannum(){
+		double travel=medal.getSumzannum();
+		if (travel>=10000) {
+			return 5;
+		} else if (travel>=5000) {
+			return 4;
+		}else if (travel>=1000) {
+			return 3;
+		}else if (travel>=200) {
+			return 2;
+		}else if (travel>=50) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	private int calConcernnum(){
+		double travel=medal.getConcernnum();
+		if (travel>=1000) {
+			return 5;
+		} else if (travel>=500) {
+			return 4;
+		}else if (travel>=100) {
+			return 3;
+		}else if (travel>=50) {
+			return 2;
+		}else if (travel>=10) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	private int calShoucangnum(){
+		double travel=medal.getShoucangnum();
+		if (travel>=300) {
+			return 5;
+		} else if (travel>=100) {
+			return 4;
+		}else if (travel>=50) {
+			return 3;
+		}else if (travel>=20) {
+			return 2;
+		}else if (travel>=5) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	private int calScorenum(){
+		double travel=medal.getScorenum();
+		if (travel>=5000) {
+			return 5;
+		} else if (travel>=2000) {
+			return 4;
+		}else if (travel>=1000) {
+			return 3;
+		}else if (travel>=500) {
+			return 2;
+		}else if (travel>=100) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		getMenuInflater().inflate(R.menu.medal_info, menu);
+		mActionBar = getActionBar();
+		mActionBar.setTitle("");
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+
+	}
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("°´ÏÂÁËback¼ü   onBackPressed()");
+		showPre();
+	}
+	public void showPre() {
+		// TODO Auto-generated method stub
+		finish();
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+			case R.id.info:
+				Intent intent = new Intent(MedalActivity.this, MedalInfo.class);
+				startActivity(intent);
+				overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
+				return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+}

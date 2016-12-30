@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+<include
+        android:id="@+id/ii_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/main_top" />
+
+   
+    <fragment
+        android:id="@+id/fragment_map"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        class="com.whut.myMap.fragment.MapFragment" />
+
+    <fragment
+        android:id="@+id/fragment_speak"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+         class="com.whut.myMap.fragment.MutiFragment" />
+ 
+    
+    <fragment
+        android:id="@+id/fragment_settings"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        class="com.whut.myMap.fragment.SettingsFragment" />
+<com.whut.myMap.fragment.FragmentIndicator
+        android:id="@+id/indicator"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="#ffffff"/>
+</LinearLayout>

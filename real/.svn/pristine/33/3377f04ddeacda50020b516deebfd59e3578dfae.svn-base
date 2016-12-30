@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.mymap.Redslocation" >
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bmapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:clickable="true" >
+    </com.baidu.mapapi.map.MapView>
+
+    <LinearLayout
+        android:id="@+id/markerinfo"
+        android:layout_width="fill_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentBottom="true"
+        android:background="#CCFFFFFF"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="210dp" >
+
+            <ImageView
+                android:id="@+id/info_img"
+                android:layout_width="fill_parent"
+                android:layout_height="210dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:alpha="1.0"
+                android:clickable="true"
+                android:scaleType="fitXY" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:layout_alignBottom="@id/info_img" >
+
+                <TextView
+                    android:id="@+id/info_name"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:ellipsize="end"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"
+                     android:shadowColor="#ff000000"
+                    android:singleLine="false"
+                    android:textColor="#CCffffff"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/info_zan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="5dp"
+                    android:gravity="fill"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="4"
+                     android:shadowColor="#ff000000"
+                    android:textColor="#CCffffff"
+                    android:textSize="20sp" />
+
+                <ImageView
+                    android:id="@+id/zan"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_toLeftOf="@id/info_zan"
+                    android:background="@drawable/icon_details_collect_selected"
+                    android:onClick="zan"
+                    android:scaleType="centerInside" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/but"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="0dp"
+            android:background="@drawable/normal_button"
+            android:text="@string/_xiangqing" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/red"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/map_btn"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_track_explore_loc_focus" />
+
+    <ImageButton
+        android:id="@+id/dingwei"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/red"
+        android:layout_below="@id/red"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/map_btn"
+        android:scaleType="fitXY"
+        android:src="@drawable/red1" />
+
+</RelativeLayout>

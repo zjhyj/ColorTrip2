@@ -1,0 +1,302 @@
+package com.whut.myMap;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.makeramen.RoundedImageView;
+import com.whut.myMap.EditTrack.selectPic;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.track;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.serverce.trackservice;
+import com.whut.myMap.widget.wheel.views.ChangeAddressDialog;
+import com.whut.myMap.widget.wheel.views.ChangeAddressDialog.OnAddressCListener;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.CursorLoader;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class CreateNewTravel extends Activity{
+	private ActionBar mActionBar;
+	private trackbean track;
+	private static Uri imageUri;
+	protected final int SHOW_RESPONSE = 0;
+	protected int CROP_SMALL_PICTURE = 3;
+	protected int CHOOSE_SMALL_PICTURE = 1;
+	protected int TAKE_SMALL_PICTURE = 2;
+	private static String filelocation;// temp
+	private static String fileName; // file
+	private String picPath;
+	private String local;
+	private EditText name;
+	private RoundedImageView image;
+	private PopupWindow pop = null;
+	private LinearLayout ll_popup;
+	private View parentView;
+	private Button mAddress;
+	private TextView localname;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		parentView = getLayoutInflater().inflate(R.layout.createtrack, null);
+		setContentView(parentView);
+		Init();
+		if (url.externalMemoryAvailable()) {
+			 filelocation = Environment.getExternalStorageDirectory() + "/Myimage/";
+		}else {
+			 filelocation =  Environment.getDataDirectory() + "/Myimage/";
+		}
+		File file = new File(filelocation);
+		if (!file.exists())
+			file.mkdirs();
+		localname=(TextView) findViewById(R.id.chooseplacetv);
+		name = (EditText) findViewById(R.id.name);
+		image = (RoundedImageView) findViewById(R.id.image);
+		image.setOnClickListener(new selectPic());
+		mAddress=(Button) findViewById(R.id.chooseplacebtn);
+		mAddress.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ChangeAddressDialog mChangeAddressDialog = new ChangeAddressDialog(
+						CreateNewTravel.this);
+				mChangeAddressDialog.setAddress("湖北", "武汉");
+				mChangeAddressDialog.show();
+				mChangeAddressDialog
+						.setAddresskListener(new OnAddressCListener() {
+
+							@Override
+							public void onClick(String province, String city) {
+								localname.setText(province+"省"+" "+city+"市");
+							}
+						});
+			}
+			
+		});
+		LinearLayout layout=(LinearLayout) findViewById(R.id.delete);
+		layout.setVisibility(View.GONE);
+	}
+	
+	public void Init() {
+		pop = new PopupWindow(CreateNewTravel.this);
+		View view = getLayoutInflater().inflate(R.layout.item_popupwindows, null);
+		ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup);
+		pop.setWidth(LayoutParams.MATCH_PARENT);
+		pop.setHeight(LayoutParams.WRAP_CONTENT);
+		pop.setBackgroundDrawable(new BitmapDrawable());
+		pop.setFocusable(true);
+		pop.setOutsideTouchable(true);
+		pop.setContentView(view);
+		RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.parent);
+		Button bt1 = (Button) view.findViewById(R.id.item_popupwindows_camera);
+		Button bt2 = (Button) view.findViewById(R.id.item_popupwindows_Photo);
+		Button bt3 = (Button) view.findViewById(R.id.item_popupwindows_cancel);
+		Button bt4 = (Button) view.findViewById(R.id.item_popupwindows_Draw);
+		bt4.setVisibility(View.GONE);
+		parent.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		bt1.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				fileName = String.valueOf(System.currentTimeMillis());
+				imageUri = Uri.fromFile(new File(filelocation, fileName + ".jpg"));
+				Intent intent1 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//action
+				intent1.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+				startActivityForResult(intent1, TAKE_SMALL_PICTURE);
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		bt2.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				fileName = String.valueOf(System.currentTimeMillis());
+				imageUri = Uri.fromFile(new File(filelocation, fileName + ".jpg"));
+				Intent intent;
+				intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				intent.setType("image/*");
+				startActivityForResult(intent,CHOOSE_SMALL_PICTURE);
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		bt3.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+	}
+	public class selectPic implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			ll_popup.startAnimation(AnimationUtils.loadAnimation(CreateNewTravel.this, R.anim.activity_translate_in));
+			pop.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
+		}
+	}
+	private void cropImageUri(Uri uri, int outputX, int outputY, int requestCode) {
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		intent.putExtra("crop", "true");
+		intent.putExtra("aspectX", 3);
+		intent.putExtra("aspectY", 2);
+		intent.putExtra("outputX", outputX);
+		intent.putExtra("outputY", outputY);
+		intent.putExtra("scale", true);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		intent.putExtra("return-data", false);
+		intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+		intent.putExtra("noFaceDetection", true); // no face detection
+		startActivityForResult(intent, requestCode);
+	}
+
+	private Bitmap decodeUriAsBitmap(Uri uri) {
+		Bitmap bitmap = null;
+		try {
+			bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return bitmap;
+	}
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != Activity.RESULT_OK) {// result is not correct
+			return;
+		} else {
+			switch (requestCode) {
+			case 1:
+				if(null!=data){
+					System.out.println("data!=nul22l");
+					Uri uri=data.getData();
+					String[] pojo = {MediaStore.Images.Media.DATA};  
+					CursorLoader cursorLoader = new CursorLoader(this, uri, pojo, null,null, null);
+				    Cursor cursor = cursorLoader.loadInBackground(); 
+			        if(cursor != null )  
+			        {  
+			        	cursor.moveToFirst();
+			            int columnIndex = cursor.getColumnIndexOrThrow(pojo[0]);  
+			            picPath = cursor.getString(columnIndex);  
+			            System.out.println("picpathav sd v"+picPath);
+			            cursor.close();  
+			        }  
+					Bitmap bitmap = decodeUriAsBitmap(uri);
+					bitmap = ThumbnailUtils.extractThumbnail(bitmap, 600, 400);
+					image.setImageBitmap(bitmap);
+			}
+					break;
+			case 2:
+				if(fileName!=null&&fileName.length()>0){
+					picPath=filelocation+fileName+".jpg";
+					}else{
+						picPath=null;
+					}
+				cropImageUri(imageUri, 600, 400, CROP_SMALL_PICTURE);
+				break;
+			case 3:
+				if (imageUri != null) {
+						Bitmap bitmap = decodeUriAsBitmap(imageUri);
+						bitmap = ThumbnailUtils.extractThumbnail(bitmap, 600, 400);
+						image.setImageBitmap(bitmap);
+					}
+				break;
+				}
+			}
+		}
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		getMenuInflater().inflate(R.menu.doodle, menu);
+		mActionBar = getActionBar();
+		mActionBar.setTitle("");
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+
+	}
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("按下了back键   onBackPressed()");
+		showPre();
+	}
+	public void showPre() {
+		// TODO Auto-generated method stub
+		finish();
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		case R.id.save:
+			try {
+				trackservice service = new trackservice(getApplication());
+				String word=name.getText().toString();
+				Date date = new Date();
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				final String str = format.format(date);
+				trackservice trackservice=new trackservice(CreateNewTravel.this);
+				//local!!
+				track track=new track(0, 0, word, str, 1, 0, picPath,0,localname.getText().toString(),0,null);
+				int track_id=trackservice.addtrack(track, CreateNewTravel.this);
+				track sectrack=new track(track_id, 0, word, str, 1, 0, picPath,0,localname.getText().toString(),0,null); 
+				Intent intent = new Intent(getApplicationContext(), Speak_Main_route.class);
+				Bundle bundle=new Bundle();
+				bundle.putSerializable("speak_item1", new trackbean(sectrack, null, null, url.SPUSER_NAME, url.SPUSER_IMAGE));
+				intent.putExtras(bundle);
+				startActivity(intent);
+				//Toast.makeText(getApplication(), "新游记已存入草稿箱", Toast.LENGTH_LONG).show();
+				fileName=null;
+				finish();
+				// showPre();
+			} catch (Exception e) {
+				Toast.makeText(getApplication(), "创建游记失败，请重试！", Toast.LENGTH_LONG).show();
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+}

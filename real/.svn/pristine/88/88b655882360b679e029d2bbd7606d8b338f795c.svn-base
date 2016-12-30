@@ -1,0 +1,530 @@
+package com.whut.myMap;
+
+import java.io.File;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import com.google.gson.Gson;
+import com.whut.myMap.R;
+import com.whut.myMap.TakePhoto.GridAdapter;
+import com.whut.myMap.dao.lbsdao;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.reds;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.serverce.Redservice;
+import com.whut.myMap.serverce.trackservice;
+import com.whut.myMap.utils.Bimp;
+import com.whut.net.addredsnet;
+import com.whut.net.addtracknet;
+
+import android.R.integer;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat.Action;
+import android.support.v4.content.CursorLoader;
+import android.text.TextPaint;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+public class WriteDongtai extends Activity {
+	private LinearLayout location;
+	private LinearLayout route;
+	private LinearLayout music;
+	private LinearLayout theme;
+	private EditText content;
+	private ScrollView scrollView;
+	private TextView title;
+	private TextView date;
+	private TextView musicname;
+	private TextView themename;
+	private ImageView imageView;
+	private LinearLayout attr;
+	private String picPath;
+	private static int RorP = 0;
+	private View parentView;
+	private static int themetype = 0;
+	private PopupWindow pop = null;
+	private LinearLayout ll_popup;
+	private trackbean testRoute = new trackbean();
+	private redsbean testPoint = new redsbean();
+	protected final int SHOW_RESPONSE = 0;
+	protected int CHOOSE_MUSIC = 3;
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			Log.i("zai", "enene1");
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if (msg.obj != null) {
+					Log.i("zai", "enene");
+					if (Integer.parseInt((String) msg.obj) == 1) {
+						if (RorP == 1) {
+							// Redservice service=new
+							// Redservice(getApplication());
+							// service.deletereds(getApplication(),testPoint);
+							testPoint = null;
+						} else if (RorP == 2) {
+							// trackservice service=new
+							// trackservice(getApplication());
+							// service.deletetrack(getApplication(),testRoute.getTrack().getTrack_id());
+							testRoute = null;
+						}
+						RorP = 0;
+						Log.i("zai", "enene3");
+						Toast.makeText(getApplication(), "分享成功!", 1).show();
+					} else {
+						Log.i("zai", "enene4");
+						Toast.makeText(getApplication(), "网络异常，请检查网络！", 1).show();
+					}
+				}
+			}
+		}
+	};
+
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		parentView = getLayoutInflater().inflate(R.layout.activity_write_dongtai, null);
+		setContentView(parentView);
+		location = (LinearLayout) findViewById(R.id.fwd_btn_location);
+		scrollView=(ScrollView) findViewById(R.id.sv_et);
+		route = (LinearLayout) findViewById(R.id.fwd_btn_route);
+		music = (LinearLayout) findViewById(R.id.music);
+		content = (EditText) findViewById(R.id.fwd_content);
+		title = (TextView) findViewById(R.id.tvTitle);
+		date = (TextView) findViewById(R.id.tvDate);
+		imageView = (ImageView) findViewById(R.id.img);
+		musicname = (TextView) findViewById(R.id.musicname);
+		attr = (LinearLayout) findViewById(R.id.add_attr);
+		theme = (LinearLayout) findViewById(R.id.fwd_btn_theme);
+		themename = (TextView) findViewById(R.id.theme_tv);
+		Init();
+		music.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent;
+				// intent = new Intent(Intent.ACTION_GET_CONTENT);
+				intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+				// intent.setType("audio/*"); //选择音频
+				// intent.putExtra("return-data",false);
+				startActivityForResult(intent, CHOOSE_MUSIC);
+			}
+		});
+		location.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(WriteDongtai.this, ChoosePoint.class);
+				startActivityForResult(intent, 1);
+				overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
+			}
+		});
+		route.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(WriteDongtai.this, ChooseRoute.class);
+				startActivityForResult(intent, 2);
+				overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
+			}
+		});
+		theme.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				ll_popup.startAnimation(AnimationUtils.loadAnimation(WriteDongtai.this, R.anim.activity_translate_in));
+				pop.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
+			}
+		});
+	}
+
+	public void Init() {
+		pop = new PopupWindow(WriteDongtai.this);
+		View view = getLayoutInflater().inflate(R.layout.choosetheme, null);
+		ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup);
+		pop.setWidth(LayoutParams.MATCH_PARENT);
+		pop.setHeight(LayoutParams.WRAP_CONTENT);
+		pop.setBackgroundDrawable(new BitmapDrawable());
+		pop.setFocusable(true);
+		pop.setOutsideTouchable(true);
+		pop.setContentView(view);
+		RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.parent);
+		ImageView r1 = (ImageView) view.findViewById(R.id.yellow);
+		ImageView r2 = (ImageView) view.findViewById(R.id.pink);
+		ImageView r3 = (ImageView) view.findViewById(R.id.blue);
+		ImageView r4 = (ImageView) view.findViewById(R.id.green);
+		ImageView r5 = (ImageView) view.findViewById(R.id.orange);
+		ImageView r6 = (ImageView) view.findViewById(R.id.sail);
+		ImageView r7 = (ImageView) view.findViewById(R.id.bluee);
+		ImageView r8 = (ImageView) view.findViewById(R.id.tree);
+		SharedPreferences settings = getSharedPreferences("medal", 0);
+		// 2、取出数据
+		int medal = settings.getInt(url.SPUSER_MEDAL, 0);
+
+		if (medal<=7) {
+			r8.setVisibility(View.GONE);
+		}
+		if (medal<=6) {
+			r7.setVisibility(View.GONE);
+		}
+		if (medal<=5) {
+			r6.setVisibility(View.GONE);
+		}
+		if (medal<=4) {
+			r5.setVisibility(View.GONE);
+		}
+		if (medal<=3) {
+			r4.setVisibility(View.GONE);
+		}
+		if (medal<=2) {
+			r3.setVisibility(View.GONE);
+		}
+		if (medal<=1) {
+			r2.setVisibility(View.GONE);
+		}
+		
+		parent.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		r1.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				themetype = 0;
+				themename.setText("简约黄白");
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		r2.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				themetype = 1;
+				themename.setText("甜蜜粉红");
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		r3.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				themetype = 3;
+				themename.setText("清新淡蓝");
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		r4.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				themetype = 2;
+				themename.setText("古典墨绿");
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		r5.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				themetype = 4;
+				themename.setText("橘红花朵");
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		r6.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				themetype = 5;
+				themename.setText("海军风");
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		r7.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				themetype = 6;
+				themename.setText("淡蓝藤花");
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		r8.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				themetype = 7;
+				themename.setText("小树林");
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != Activity.RESULT_OK) {// result is not correct
+			return;
+		} else {
+			switch (requestCode) {
+			case 1:
+				try {
+					scrollView.setVisibility(View.VISIBLE);
+					testPoint = (redsbean) data.getSerializableExtra("POINT");
+					date.setText(testPoint.getReds().getDate().toString());
+					title.setText(testPoint.getReds().getWords());
+					content.setText(testPoint.getReds().getWords());
+					try {
+						imageView.setImageURI(Uri.parse(testPoint.getListmap().get(0).getImgurl()));
+					} catch (Exception e) {
+						imageView.setImageResource(R.drawable.loadpic);
+					}
+					RorP = 1;
+					attr.setVisibility(View.GONE);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				break;
+			case 2:
+				try {
+					scrollView.setVisibility(View.VISIBLE);
+					testRoute = (trackbean) data.getSerializableExtra("ROUTE");
+					date.setText(testRoute.getTrack().getDate());
+					title.setText(testRoute.getTrack().getWords());
+					content.setText(testRoute.getTrack().getWords());
+					try {
+						imageView.setImageURI(Uri.parse(testRoute.getTrack().getBgurl()));
+					} catch (Exception e) {
+						imageView.setImageResource(R.drawable.loadpic);
+					}
+					RorP = 2;
+					attr.setVisibility(View.VISIBLE);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				break;
+			case 3:
+				if (null != data) {
+					System.out.println("data!=nul22l");
+					Uri uri = data.getData();
+					Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+					cursor.moveToFirst();
+					picPath = cursor.getString(1); // 文件路径
+					String imgName = cursor.getString(2); // 文件名
+					musicname.setText(imgName);
+					Log.e("uri", uri.toString() + " " + imgName + " " + picPath);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.writedt_menu, menu);
+		ActionBar mActionBar = getActionBar();
+		mActionBar.setTitle("");
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		case R.id.cancel_post:
+			finish();
+			overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		case R.id.post:
+			if (RorP == 1) {
+				testPoint.getReds().setWords(content.getText().toString());
+				testPoint.getReds().setTrack_id(0);
+				post(testPoint);
+				finish();
+				return true;
+			} else if (RorP == 2) {
+				testRoute.getTrack().setWords(content.getText().toString());
+				testRoute.getTrack().setMusicstring(picPath);
+				testRoute.getTrack().setTheme(themetype);
+				
+				post(testRoute);
+				finish();
+				return true;
+			} else {
+				Toast.makeText(getApplication(), "发送内容不能为空！", 0).show();
+			}
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+	}
+
+	/**
+	 * rorp=1 地点 testPoint
+	 * 
+	 * rorp=2 路径 testRoute
+	 * 
+	 * @param testPoint
+	 * 
+	 * 
+	 */
+	private void post(final Object textObject) {
+		switch (RorP) {
+		case 1:
+			new Thread(new Runnable() {
+				String result;
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						addredsnet addredsnet = new addredsnet();
+						String ret = addredsnet.addreds((redsbean) textObject);
+						if (ret != null && ret.length() > 0) {
+							result = ret;
+						} else {
+							result = "2";
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+						result = "2";
+					} finally {
+						Message message = new Message();
+						message.what = SHOW_RESPONSE;
+						message.obj = result.toString();
+						handler.sendMessage(message);
+					}
+				}
+			}).start();
+			break;
+		case 2:
+			new Thread(new Runnable() {
+				String result;
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try {
+						trackbean trackbean=(trackbean) textObject;
+						trackservice service=new trackservice(getApplication());
+						List<redsbean> listreds=new ArrayList<redsbean>();
+						List<trackbean> list=service.gettrackbyfir(getApplication(),testRoute.getTrack().getTrack_id());
+						List<lbs> listlbs=new lbsdao(getApplication()).getallbs(testRoute.getTrack().getTrack_id()); 
+						
+						trackbean.setLbsbean(listlbs);
+						
+						for(trackbean track:list){
+							try {
+								listreds.addAll(track.getRedsbean());
+							} catch (Exception e) {
+								// TODO: handle exception
+								
+							}
+						}
+						trackbean.setRedsbean(listreds);
+						addtracknet addredsnet = new addtracknet();
+						String ret = addredsnet.addtrackbean(trackbean, getApplication());
+						if (ret != null && ret.length() > 0) {  
+							result = ret;
+						} else {
+							result = "2";
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+						result = "2";
+					} finally {
+						Message message = new Message();
+						message.what = SHOW_RESPONSE;
+						message.obj = result.toString();
+						handler.sendMessage(message);
+					}
+				}
+			}).start();
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("按下了back键   onBackPressed()");
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+}

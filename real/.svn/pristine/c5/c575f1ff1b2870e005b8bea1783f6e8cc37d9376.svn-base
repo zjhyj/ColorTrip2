@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.whut.myMap"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.whut.myMap" >
+    </instrumentation>
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="17" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.SET_DEBUG_APP" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
+    <!-- 个推SDK权限配置开始 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- 支持iBeancon 需要蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- 浮动通知权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- 自定义权限 -->
+    <uses-permission android:name="getui.permission.GetuiService.com.whut.myMap" />
+
+    <permission
+        android:name="getui.permission.GetuiService.com.whut.myMap"
+        android:protectionLevel="normal" >
+    </permission>
+    <!-- 个推SDK权限配置结束 -->
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/my_theme" >
+        <uses-library android:name="android.test.runner" />
+
+        <meta-data
+            android:name="PUSH_APPID"
+            android:value="tdWqkqZVsW7U55L6oyW2V7" />
+        <!-- 替换为第三方应用的APPID -->
+        <meta-data
+            android:name="PUSH_APPKEY"
+            android:value="r68c7JZOaF9UzAXbEUlrL3" />
+        <!-- 替换为第三方应用的APPKEY -->
+        <meta-data
+            android:name="PUSH_APPSECRET"
+            android:value="Ypr0I0cNgV9yaZyALWuzj6" />
+        <!-- 替换为第三方应用的APPSECRET -->
+        <!-- 配置SDK核心服务 -->
+        <service
+            android:name="com.igexin.sdk.PushService"
+            android:exported="true"
+            android:label="NotificationCenter"
+            android:process=":pushservice" />
+        <service
+            android:name="com.igexin.sdk.PushServiceUser"
+            android:exported="true"
+            android:label="NotificationCenterUser" />
+
+        <receiver android:name="com.igexin.sdk.PushReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="com.igexin.sdk.action.refreshls" />
+                <!-- 以下三项为可选的action声明，可大大提高service存活率和消息到达速度 -->
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.igexin.sdk.PushManagerReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.igexin.sdk.action.pushmanager" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="com.igexin.sdk.PushActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:process=":pushservice"
+            android:taskAffinity="com.igexin.sdk.PushActivityTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="com.igexin.sdk.GActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:process=":pushservice"
+            android:taskAffinity="com.igexin.sdk.PushActivityTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <receiver
+            android:name=".PushReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.igexin.sdk.action.tdWqkqZVsW7U55L6oyW2V7" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.igexin.download.DownloadService"
+            android:process=":pushservice" />
+
+        <receiver android:name="com.igexin.download.DownloadReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name="com.igexin.download.DownloadProvider"
+            android:authorities="downloads.com.whut.myMap"
+            android:exported="true"
+            android:process=":pushservice" />
+        <!-- 替换为第三方应用的包名 -->
+
+        <activity
+            android:name="com.igexin.getuiext.activity.GetuiExtActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:process=":pushservice"
+            android:taskAffinity="android.task.myServicetask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <receiver
+            android:name="com.igexin.getuiext.service.PayloadReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.igexin.sdk.action.7fjUl2Z3LH6xYy7NQK4ni4" />
+                <action android:name="com.igexin.sdk.action.tdWqkqZVsW7U55L6oyW2V7" />
+                <!-- 替换为第三方应用的APPID -->
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.igexin.getuiext.service.GetuiExtService"
+            android:process=":pushservice" />
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="pmxFTkKy3bMlOEClfahMy3SodiixH0mi" />
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:permission="android.permission.BAIDU_LOCATION_SERVICE"
+            android:process=":remote" >
+        </service>
+        
+        <activity  
+           android:name="com.tencent.tauth.AuthActivity"  
+            android:noHistory="true"  
+            android:launchMode="singleTask">  
+         <intent-filter>  
+                      <action android:name="android.intent.action.VIEW" />  
+                   <category android:name="android.intent.category.DEFAULT" />  
+                   <category android:name="android.intent.category.BROWSABLE" />  
+                            <!--下面这个XXXXXXXXXXXX就是你申请腾讯开发平台所给的app key-->  
+                      <data android:scheme="tencent1105307237" />  
+           </intent-filter>  
+         </activity>  
+          <activity android:name="com.tencent.connect.common.AssistActivity"  
+    android:theme="@android:style/Theme.Translucent.NoTitleBar"  
+    android:configChanges="orientation|keyboardHidden"/>  
+        
+        
+
+        <activity
+            android:name=".SplashActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.BackgroundTranslucent" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".ResetPassword" >
+        </activity>
+        <activity
+            android:name=".HomeActivity"
+            android:launchMode="standard" />
+        <activity android:name=".PersonalActivity" />
+        <activity
+            android:name=".PersonalSettingActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".FavouriteActivity"
+            android:label="@string/title_activity_favourite" >
+        </activity>
+        <activity
+            android:name=".WriteDongtai"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".AboutThis" />
+         <activity android:name=".UserInfoOther" />
+        <activity android:name=".MyDongTai" />
+        <activity android:name=".FavorRoute" />
+        <activity android:name=".FavorPoint" />
+        <activity android:name=".MyComment" />
+        <activity android:name=".sharetrack" />
+        <activity android:name=".UserInfo" />
+        <activity android:name=".Speak_Main" />
+        <activity android:name=".Speak_MainNET" />
+        <activity android:name=".Speak_Main_route" />
+        <activity android:name=".Speak_Main_routeNET" />
+        <activity android:name=".Speak_Main_routeNET_ST" />
+        <activity android:name=".Speak_MainNET_ST" />
+        <activity android:name=".OtherComment" />
+        <activity
+            android:name=".TakePhoto"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Popup"
+            android:theme="@style/MyDialogStyleBottom" />
+        <activity android:name=".ChooseRoute" >
+        </activity>
+        <activity android:name=".ChoosePoint" >
+        </activity>
+        <activity
+            android:name=".WriteComment"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".MyFootPrint" >
+        </activity>
+        <activity android:name=".MyRate" />
+        <activity android:name=".MyDongtai" >
+        </activity>
+        <activity android:name=".ImagePagerActivity" />
+        <activity android:name=".Redslocation" />
+        <activity android:name=".RedslocationNET" >
+        </activity>
+        <activity android:name=".Trackshow" >
+        </activity>
+        <activity android:name=".TrackshowNET" >
+        </activity>
+        <activity android:name=".guideNET" >
+        </activity>
+        <activity android:name=".GuideshowNET" >
+        </activity>
+        <activity android:name=".ChangeSet" >
+        </activity>
+        <activity android:name=".CalculateActivity" >
+        </activity>
+        <activity android:name=".CommentList" >
+        </activity>
+         <activity android:name=".UserMain" >
+        </activity>
+         <activity android:name=".User_Main_Route" >
+        </activity>
+         <activity android:name=".MyConcern" >
+        </activity>
+        <activity
+            android:name=".GalleryActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".Savetrack"
+            android:label="@string/title_activity_savetrack" >
+        </activity>
+        <activity android:name=".Localreds" >
+        </activity>
+        <activity android:name=".ChangePWD" />
+        <activity
+            android:name=".Mymap"
+            android:label="@string/title_activity_mymap" >
+        </activity>
+        <activity
+            android:name=".Serch"
+            android:label="@string/title_activity_serch"
+            android:launchMode="singleTop" >
+            <intent-filter>  
+               <action android:name="android.intent.action.SEARCH"/>  
+            </intent-filter>  
+            <meta-data android:name="android.app.searchable"  
+                       android:resource="@xml/searchable"/>  
+        </activity>
+        
+    </application>
+</manifest>

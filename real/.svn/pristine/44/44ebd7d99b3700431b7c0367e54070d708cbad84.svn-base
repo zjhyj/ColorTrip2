@@ -1,0 +1,30 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+public class ELchild implements Serializable{
+       private int num;
+       private String text;
+	public int getNum() {
+		return num;
+	}
+	public void setNum(int num) {
+		this.num = num;
+	}
+	public String getText() {
+		return text;
+	}
+	public void setText(String text) {
+		this.text = text;
+	}
+	public ELchild(int num, String text) {
+		super();
+		this.num = num;
+		this.text = text;
+	}
+	public ELchild() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+       
+}

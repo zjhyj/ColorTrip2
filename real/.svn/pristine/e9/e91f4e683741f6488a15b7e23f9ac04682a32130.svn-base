@@ -1,0 +1,429 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.InfoWindow;
+import com.baidu.mapapi.map.MapPoi;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.BaiduMap.OnMapClickListener;
+import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.baidu.mapapi.utils.DistanceUtil;
+import com.loopj.android.image.BitmapImage;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.Redslocation.ViewHolder;
+import com.whut.myMap.domain.clusterpair;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.cluster;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.picture;
+import com.whut.myMap.utils.MyOrientationListener;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.myMap.utils.pictureutil;
+import com.whut.net.getclusterpairbynetid;
+import com.whut.net.getcountnet;
+import com.whut.net.getlocalredsnet;
+
+import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Bitmap.Config;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+public class GuideshowNET extends Activity {
+	 public MapView mapView = null;  
+     public BaiduMap baiduMap = null;  
+ 	 private View Mymarker; 
+ 	List <LatLng>  lat=new ArrayList<LatLng>();
+ 	protected static final int SHOW_RESPONSE = 0;
+	protected static final int SHOW_RESPONSE_like = 1;
+ 	private ImageButton local;
+ 	private ImageButton red;
+	private String jsonstring;
+	private static LatLng nowlocal;
+	private static boolean islong = false;
+	static int like;
+ 	private static LatLng latstatic;
+ 	  private MyOrientationListener myOrientationListener;
+ 	private LocationClient locationclient;
+ 	private BitmapDescriptor  mIconLocation;
+	/* (non-Javadoc)
+	 * @see android.support.v7.app.ActionBarActivity#onCreate(android.os.Bundle)
+	 */
+	BDLocationListener mylistener=new BDLocationListener() {
+		@Override
+		public void onReceiveLocation(BDLocation  location) {
+			// TODO Auto-generated method stub
+			 if (location == null) {  
+	                return;   }  
+			MyLocationData locationdata=new MyLocationData.Builder().
+					accuracy(location.getRadius()).
+					direction(location.getDerect()).
+					latitude(location.getLatitude()).
+					longitude(location.getLongitude()).build();
+			baiduMap.setMyLocationData(locationdata);
+//			   MyLocationConfiguration config=new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, true,mIconLocation);
+//			    baiduMap.setMyLocationConfigeration(config);
+				LatLng  firstloc=new LatLng(location.getLatitude(),location.getLongitude());
+				MapStatusUpdate u=MapStatusUpdateFactory.newLatLng(firstloc);
+				baiduMap.animateMapStatus(u);
+				if (islong) {
+					nowlocal = new LatLng(location.getLatitude(),
+							location.getLongitude());
+				}
+		}
+ 	};
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		SDKInitializer.initialize(getApplicationContext());
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_redslocation);
+		mIconLocation = BitmapDescriptorFactory.fromResource(R.drawable.ding4);
+		mapView=(MapView) findViewById(R.id.bmapView);
+		baiduMap=mapView.getMap();
+		baiduMap.setMapType(baiduMap.MAP_TYPE_NORMAL);
+		baiduMap.setMyLocationEnabled(true);
+		local=(ImageButton) findViewById(R.id.dingwei);
+		local.setOnClickListener(new OnClickListener() {		
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				 if(locationclient != null &&locationclient.isStarted());
+				 locationclient.requestLocation();
+			 }
+		});
+		red=(ImageButton) findViewById(R.id.red);
+		red.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				MapStatusUpdate u=MapStatusUpdateFactory.newLatLng(latstatic);
+				baiduMap.animateMapStatus(u);
+			}
+		});
+		locationclient=new LocationClient(this);
+		locationclient.registerLocationListener(mylistener);
+		LocationClientOption option=new LocationClientOption();
+		option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);// 设置定位模式  
+	    option.setCoorType("bd09ll"); // 返回的定位结果是百度经纬度,默认值gcj02  
+	    option.setIsNeedAddress(true); // 返回的定位结果包含地址信息  
+	    option.setNeedDeviceDirect(true); // 返回的定位结果包含手机机头的方向  
+	    option.setOpenGps(true);
+	    // 初始化图标
+	    mIconLocation = BitmapDescriptorFactory.fromResource(R.drawable.follow);
+        myOrientationListener = new MyOrientationListener(this);
+        myOrientationListener.setOnOrientationListener(new com.whut.myMap.utils.MyOrientationListener.OnOrientationListener()
+        {
+             public void onOrientationChanged(float x,float lastX)
+             {
+            	 RotateAnimation ra=new   RotateAnimation(lastX, -x, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f); 
+            			 }
+          });
+	    locationclient.setLocOption(option);
+	    locationclient.start(); // 开始定位	
+	    myOrientationListener.start();
+		Mymarker=findViewById(R.id.markerinfo);
+	    Mymarker.setVisibility(View.GONE); 
+		baiduMap=mapView.getMap();
+		baiduMap.setMapType(baiduMap.MAP_TYPE_NORMAL);
+		baiduMap.setMyLocationEnabled(true);
+		Intent intent=getIntent();
+		int netid=intent.getIntExtra("speak_item", 0);
+        Log.i("netid", netid+"");
+	    getData(netid);
+	}
+	private void getData(final int netid) {
+		// Variable variable=new Variable();
+		new Thread(new Runnable() {
+			String result;
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					getclusterpairbynetid getclusterpairbynetid=new getclusterpairbynetid();
+					String jsonstring1=getclusterpairbynetid.getclusterpair(netid);
+					if (jsonstring1 != null && jsonstring1.length() > 0) {
+						jsonstring = jsonstring1;
+						result = "1";
+					} else {
+						result = "0";
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					result = "2";
+				} finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = SHOW_RESPONSE;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if (Integer.parseInt((String) msg.obj) == 1) {
+					Log.i("zai", "enene");
+					Log.i("zai", "enene3");
+					gsonutil gson = new gsonutil();
+					Log.i("json", jsonstring);
+					List<clusterpair> person = (ArrayList<clusterpair>) gson
+							.fromJsonList(jsonstring, clusterpair.class);
+					show(person);
+				} else if (Integer.parseInt((String) msg.obj) == 0) {
+					Toast.makeText(getApplicationContext(), "数据错误！", 0).show();
+					return;
+				} else {
+					Toast.makeText(getApplicationContext(), "网络异常！", 0).show();
+				}
+			case SHOW_RESPONSE_like:
+				like = Integer.parseInt((String) msg.obj);
+			}
+		}
+	};
+
+	public void show(List<clusterpair> person) {
+		try {
+			for (int i = 0; i < person.size() - 1; i++) {
+				List<LatLng> list = new ArrayList<LatLng>();
+				clusterpair clu = person.get(i);
+				LatLng lat = new LatLng(clu.getPx(), clu.getPy());
+				LatLng lat2 = new LatLng(clu.getLx(), clu.getLy());
+				latstatic=lat;
+				if (clu.getIscontain() == 1) {
+					BitmapDescriptor bitmap = BitmapDescriptorFactory
+							.fromResource(R.drawable.flag);
+					// 构建MarkerOption，用于在地图上添加Marker
+					OverlayOptions option = new MarkerOptions().position(lat)
+							.icon(bitmap);
+					// 在地图上添加Marker，并显示
+					Marker marker = (Marker) (baiduMap.addOverlay(option));
+					Bundle bundle = new Bundle();
+					bundle.putSerializable(
+							"red",
+							new cluster(clu.getLclusterid(), clu.getLx(), clu
+									.getLy()));
+					marker.setExtraInfo(bundle);
+				}
+			    List<LatLng> demo=new ArrayList<LatLng>();
+		        demo.add(new LatLng(lat.latitude,lat.longitude));
+		        demo.add(new LatLng(lat2.latitude,lat2.longitude));
+		        OverlayOptions ooPolyline = new PolylineOptions().width(5)
+		                                .color(0xAAFF0000).points(demo).visible(true);
+		                baiduMap.addOverlay(ooPolyline);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		baiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				// TODO Auto-generated method stub
+				final cluster red = (cluster) marker.getExtraInfo().get("red");
+				InfoWindow mInfoWindow=null;
+				View popview = LayoutInflater.from(getApplicationContext()).inflate(
+						R.layout.infowindow, null);
+				popupInfo(popview, red);
+//				baiduMap.hideInfoWindow();
+				// 将marker所在的经纬度的信息转化成屏幕上的坐标
+				final LatLng ll = marker.getPosition();
+				 mInfoWindow = new InfoWindow(popview, ll, -47);
+				// 显示InfoWindow
+				baiduMap.showInfoWindow(mInfoWindow);
+				popview.setVisibility(View.INVISIBLE);
+				return true;
+			}
+
+			private void popupInfo(View mymarker, final cluster red) {
+				// TODO Auto-generated method stub
+				ViewHolder viewHolder = null;
+				final TextView address = (TextView) mymarker
+						.findViewById(R.id.address);
+				if (mymarker.getTag() == null) {
+					viewHolder = new ViewHolder();
+					viewHolder.length = (TextView) mymarker
+							.findViewById(R.id.length);
+					viewHolder.like = (TextView) mymarker
+							.findViewById(R.id.like);
+					viewHolder.more = (TextView) mymarker
+							.findViewById(R.id.more);
+					mymarker.setTag(viewHolder);
+				}
+				viewHolder = (ViewHolder) mymarker.getTag();
+				GeoCoder geo = GeoCoder.newInstance();
+				OnGetGeoCoderResultListener listener = new OnGetGeoCoderResultListener() {
+					// 反地理编码查询结果回调函数
+					@Override
+					public void onGetReverseGeoCodeResult(
+							ReverseGeoCodeResult result) {
+						if (result == null
+								|| result.error != SearchResult.ERRORNO.NO_ERROR) {
+							// 没有检测到结果
+							return;
+						}
+						address.setText(result.getAddress());
+						System.out.println(address);
+					}
+
+					// 地理编码查询结果回调函数
+					@Override
+					public void onGetGeoCodeResult(GeoCodeResult result) {
+						if (result == null
+								|| result.error != SearchResult.ERRORNO.NO_ERROR) {
+							// 没有检测到结果
+						}
+					}
+				};
+				geo.setOnGetGeoCodeResultListener(listener);
+				geo.reverseGeoCode(new ReverseGeoCodeOption()
+						.location(new LatLng(red.getX(), red.getY())));
+				Log.i("clusterid", red.getClusterid() + "" + address + " "
+						+ red.getX() + "  " + red.getY());
+				while (true) {
+					if (locationclient != null && locationclient.isStarted()) {
+						islong = true;
+						locationclient.requestLocation();
+						// System.out.println(nowlocal.latitude+nowlocal.longitude);
+						viewHolder.length.setText(""
+								+ (int) DistanceUtil.getDistance(nowlocal,
+										new LatLng(red.getX(), red.getY()))+"米");
+						islong=false;
+						break;
+					}
+				}
+				getcount(red.getClusterid());
+				viewHolder.like.setText(like + "");
+				viewHolder.more.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Intent intent = new Intent(getApplicationContext(),
+								Localreds.class);
+						intent.putExtra("clusterid", red.getClusterid());
+						startActivity(intent);
+					}
+				});
+
+			}
+		});
+	}
+	class ViewHolder {
+		TextView address;
+		TextView length;
+		TextView like;
+		TextView more;
+	}
+	private void getcount(final int clusterid) {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			String result;
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					getcountnet getcountnet = new getcountnet();
+					result = getcountnet.getlocal(clusterid);
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+					result = "99999";
+				} finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = SHOW_RESPONSE_like;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+		 
+
+    	@Override
+    	public void onDestroy() { 
+    		super.onDestroy();  
+            //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理  
+            locationclient.stop()       ; 
+            myOrientationListener.stop();
+            baiduMap.setMyLocationEnabled(false);  
+            baiduMap.clear();
+            // TODO Auto-generated method stub  
+            mapView.onDestroy();  
+            mapView = null;   
+        }  
+        @Override
+    	public void onResume() {  
+            super.onResume();  
+            //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理  
+            mapView.onResume(); 
+            locationclient.start(); 
+    	      myOrientationListener.start();
+            }  
+        public void onstart() {
+    		super.onStart();
+    		 locationclient.start();
+    	      myOrientationListener.start();
+    	}
+        @Override
+    	public void onPause() {  
+            super.onPause();  
+            //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理             
+            mapView.onPause(); 
+            }  
+        public void onStop() {
+    		super.onStop();
+    		  locationclient.stop()       ; 
+    	      myOrientationListener.stop();
+    	}  	
+    	
+    	
+}	

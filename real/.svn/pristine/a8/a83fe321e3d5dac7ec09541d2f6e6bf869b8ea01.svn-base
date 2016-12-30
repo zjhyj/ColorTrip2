@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:makeramen="http://schemas.android.com/apk/res/com.whut.myMap"
+    android:layout_width="match_parent"
+    android:layout_height="200dp" >
+
+    <com.makeramen.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image"
+        android:padding="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/meili"
+        makeramen:border_color="@android:color/transparent"
+        makeramen:border_width="1dip"
+        makeramen:corner_radius="10dip" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp" >
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:shadowColor="#ff000000"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="5"
+            android:singleLine="true"
+            android:text="中国第一省--河南"
+            android:textColor="#FFFFFF"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+     
+    </RelativeLayout>
+
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true">
+         <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_alignParentLeft="true"
+                android:shadowColor="#ff000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"
+                android:text="2016.2.27"
+                android:paddingRight="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="5dp"
+                
+                 android:layout_centerVertical="true"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:textStyle="italic" />
+        <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_alignParentRight="true"
+                android:shadowColor="#ff000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"
+                android:text="赵君豪"
+                android:paddingRight="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="5dp"
+                
+                 android:layout_centerVertical="true"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:textStyle="italic" />
+          <TextView
+                android:id="@+id/by"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/username"
+                android:layout_marginTop="2dp"
+                android:shadowColor="#ff000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"
+                android:text="by"
+                android:paddingBottom="15dp"
+                 android:layout_centerVertical="true"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:textStyle="italic" />
+ <com.makeramen.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/head"
+        android:layout_toLeftOf="@id/by"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="centerCrop"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_launcher"
+        makeramen:border_color="@android:color/transparent"
+        makeramen:border_width="1dip"
+        makeramen:corner_radius="100dip" />
+
+   
+   </RelativeLayout>
+</RelativeLayout>

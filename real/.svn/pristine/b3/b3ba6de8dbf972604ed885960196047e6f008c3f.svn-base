@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contacts_items"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:background="@drawable/bg_pic_cell" >
+
+    <com.whut.myMap.adapter.SpeakGridView
+        android:id="@+id/tvGridview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:horizontalSpacing="2dp"
+        android:numColumns="3"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="4dp" />
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:text="Hello world"
+        android:textSize="15sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:padding="3dp"
+        android:layout_centerVertical="true"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="13:32"
+        android:textColor="#cccccc"
+        android:textSize="12sp" />
+
+    <View
+        android:id="@+id/lastLine2"
+        android:layout_width="fill_parent"
+        android:layout_height="4dp"
+        android:background="#ffffff" />
+
+
+</LinearLayout>

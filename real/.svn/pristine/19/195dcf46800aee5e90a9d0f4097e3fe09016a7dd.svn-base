@@ -1,0 +1,63 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+import java.util.List;
+
+public class net implements Serializable {
+	private  int net_id;
+	private String words;
+	private int zan;
+	private String dates;
+	private int type;
+    private List<clusterpair> listclusterList;
+	public int getNet_id() {
+		return net_id;
+	}
+	public void setNet_id(int net_id) {
+		this.net_id = net_id;
+	}
+	public String getWords() {
+		return words;
+	}
+	public void setWords(String words) {
+		this.words = words;
+	}
+	public int getZan() {
+		return zan;
+	}
+	public void setZan(int zan) {
+		this.zan = zan;
+	}
+	public String getDates() {
+		return dates;
+	}
+	public void setDates(String dates) {
+		this.dates = dates;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	public List<clusterpair> getListclusterList() {
+		return listclusterList;
+	}
+	public void setListclusterList(List<clusterpair> listclusterList) {
+		this.listclusterList = listclusterList;
+	}
+	public net(int net_id, String words, int zan, String dates, int type,
+			List<clusterpair> listclusterList) {
+		super();
+		this.net_id = net_id;
+		this.words = words;
+		this.zan = zan;
+		this.dates = dates;
+		this.type = type;
+		this.listclusterList = listclusterList;
+	}
+	public net() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+}

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:makeramen="http://schemas.android.com/apk/res/com.whut.myMap"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/spinner">
+        <TextView 
+            android:id="@+id/set"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="游记设置"
+            android:textColor="#ffffff"
+            android:textSize="22sp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"/>
+        <EditText 
+            android:id="@+id/name"
+            android:hint="  请输入你的游记名称"
+               android:textColorHint = "#7fFFFFFF"       
+              android:drawableLeft="@drawable/icon_trip_white_16"
+              android:textColor="#ffffff"
+              android:layout_below="@id/set"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/round_editstyle"/>
+        <View 
+            android:layout_width="10dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/name"/>
+        
+    </RelativeLayout>
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择封面"
+        android:textColor="#666666"
+        android:layout_margin="5dp"
+        />
+<com.makeramen.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+         android:layout_margin="5dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_trip_pic_placeholder_big"
+        makeramen:border_color="@android:color/transparent"
+        makeramen:border_width="1dip"
+        makeramen:corner_radius="10dip" />
+<LinearLayout 
+    android:id="@+id/delete"
+    android:clickable="true"
+    android:layout_width="wrap_content"
+    android:layout_height="30dp"
+    android:orientation="horizontal"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="5dp"
+    android:background="@drawable/health_infopop_button_empty"
+    android:layout_gravity="bottom|right">
+        <ImageView 
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_delete_red_12"
+            android:layout_gravity="center_vertical"/>
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="删除"
+        android:layout_marginRight="5dp"
+         android:layout_marginTop="5dp"
+         android:layout_marginBottom="5dp"
+         android:layout_gravity="center_vertical"
+      />
+</LinearLayout>
+</LinearLayout>

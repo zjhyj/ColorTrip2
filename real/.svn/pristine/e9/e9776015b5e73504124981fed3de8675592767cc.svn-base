@@ -1,0 +1,438 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.whut.myMap.domain.listtracklbs;
+import com.whut.myMap.domain.service;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.niftynotification.Configuration;
+import com.whut.myMap.niftynotification.Effects;
+import com.whut.myMap.niftynotification.NiftyNotificationView;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.getmydongtaiRoutenet;
+import com.whut.net.getredslbsnet;
+import com.whut.net.getservicelbsnet;
+import com.whut.net.gettracklbsnet;
+
+import android.support.v7.app.ActionBarActivity;
+import android.R.integer;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.whut.myMap.domain.redslbs;
+public class Mymap extends Activity {
+	private ActionBar mActionBar;
+	protected String jsonstring;
+	protected String result;
+	protected final int TRACK_LBS=0;
+	protected final int REDS_LBS=1;
+	protected final int SERVICE_LBS=2;
+	protected final int INFO=3;
+	protected   ArrayList<listtracklbs> tracklbs;
+	protected ArrayList<com.whut.myMap.domain.redslbs> redslbs;
+	protected ArrayList<service> servicelbs;
+	private int point;
+	private int track;
+	private int service;
+ 	protected static boolean isFirstLoc=true;
+	protected static boolean isrequest=true;
+	protected Map<String, Integer> info;
+	BDLocationListener mylistener=new BDLocationListener() {
+		private BitmapDescriptor miconlocation;
+		@Override
+		public void onReceiveLocation(BDLocation  location) {
+			// TODO Auto-generated method stub
+			 if (location == null) {  
+	                return;   }  
+			MyLocationData locationdata=new MyLocationData.Builder().
+					accuracy(location.getRadius()).
+					direction(location.getDerect()).
+					latitude(location.getLatitude()).
+					longitude(location.getLongitude()).build();
+			baiduMap.setMyLocationData(locationdata);
+			miconlocation = BitmapDescriptorFactory.fromResource(R.drawable.follow);
+			   MyLocationConfiguration config=new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, true,miconlocation);
+			    baiduMap.setMyLocationConfigeration(config);
+				LatLng  firstloc=new LatLng(location.getLatitude(),location.getLongitude());
+				if (isFirstLoc || isrequest) {
+					MapStatusUpdate u=MapStatusUpdateFactory.newLatLng(firstloc);
+				baiduMap.animateMapStatus(u);
+					isFirstLoc = false;
+					isrequest = false;
+				}
+				
+		}
+ 	};
+	private Handler handler=new Handler(){
+		public void handleMessage(Message msg) {
+			tracklbs=new ArrayList<listtracklbs>();
+			redslbs=new ArrayList<com.whut.myMap.domain.redslbs>();
+			servicelbs=new ArrayList<service>();
+			info=new HashMap<String, Integer>();
+			switch (msg.what) {
+			case TRACK_LBS:
+				Log.i("zai", "enene2");
+				if(Integer.parseInt((String) msg.obj)==1){
+					Log.i("zai", "enene");
+						Log.i("zai", "enene3");
+						gsonutil gson=new gsonutil();
+						Log.i("json",jsonstring);
+						tracklbs=(ArrayList<listtracklbs>) gson.fromJsonList(jsonstring, listtracklbs.class);	
+				        showtrack(tracklbs);
+				        getredslbs();
+				}else{					
+						Toast.makeText(getApplicationContext(), "没有更多了！", 0).show();	
+						return;
+					}
+				break;
+			case REDS_LBS:
+				if(Integer.parseInt((String) msg.obj)==1){
+					Log.i("zai", "enene");
+						Log.i("zai", "enene3");
+						gsonutil gson=new gsonutil();
+						Log.i("json",jsonstring);
+						redslbs=(ArrayList<com.whut.myMap.domain.redslbs>) gson.fromJsonList(jsonstring, com.whut.myMap.domain.redslbs.class);	
+				        showreds(redslbs);
+				        
+				        getservicelbs();
+				}else{					
+						Toast.makeText(getApplicationContext(), "请检查您的网络！", 0).show();	
+						return;
+					}
+				break;
+			case SERVICE_LBS:
+				if(Integer.parseInt((String) msg.obj)==1){
+					Log.i("zai", "enene");
+						Log.i("zai", "enene3");
+						gsonutil gson=new gsonutil();
+						Log.i("json",jsonstring);
+						try {
+							servicelbs=(ArrayList<service>) gson.fromJsonList(jsonstring,service.class);	
+							showservice(servicelbs);
+						}catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}  
+				}else{					
+						Toast.makeText(getApplicationContext(), "请检查您的网络！", 0).show();	
+						return;
+					}
+				break;
+			case INFO:
+				if(Integer.parseInt((String) msg.obj)==1){
+					Log.i("zai", "enene");
+						Log.i("zai", "enene3");
+						Gson gson=new Gson();
+						Log.i("INFI",jsonstring);
+						try {
+							info=gson.fromJson(jsonstring,  new TypeToken<Map<String, Integer>>() { }.getType());	
+							point=info.get("point");
+							track=info.get("track");
+							service=info.get("service");
+							Log.i("INFI",info.toString());
+							Log.i("INFI",info.get("point").toString());
+							Log.i("INFI",jsonstring);
+						}catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}  
+				}else{					
+						Toast.makeText(getApplicationContext(), "请检查您的网络！", 0).show();	
+						return;
+					}
+				break;
+		  }
+		}
+	};
+	private MapView mapView;
+	private BaiduMap baiduMap;
+	private LocationClient locationClient;
+	private List<LatLng> lat;     
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		SDKInitializer.initialize(getApplicationContext());
+		setContentView(R.layout.activity_mymap);
+		mapView=(MapView) findViewById(R.id.bmapView);
+		ImageView show=(ImageView) findViewById(R.id.show);
+		show.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showStatisic();
+			}
+		});
+		baiduMap=mapView.getMap();
+		baiduMap.setMapType(baiduMap.MAP_TYPE_NORMAL);
+		baiduMap.setMyLocationEnabled(true);
+		mapView.showScaleControl(false);
+		mapView.showZoomControls(false);
+		 LocationClientOption optionlocation=new LocationClientOption();
+			locationClient=new LocationClient(this);
+			locationClient.registerLocationListener(mylistener);	
+			optionlocation.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);// 设置定位模式  
+			optionlocation.setCoorType("bd09ll"); // 返回的定位结果是百度经纬度,默认值gcj02  
+		    locationClient.setLocOption(optionlocation);
+			locationClient.start(); // 开始定位	
+		
+		gettracklbs();
+		getinfo();
+		
+		
+		
+	}
+	private void showStatisic(){
+		Configuration cfg=new Configuration.Builder()
+			      .setAnimDuration(700)
+			      .setDispalyDuration(1500)
+			      .setBackgroundColor("#ffffff")
+			      .setTextColor("#458B74")
+			      .setIconBackgroundColor("#ffffffff")
+			      .setTextPadding(3)                      //dp
+			      .setViewHeight(60)   //dp
+			      .setTextLines(3)  //You had better use setViewHeight and setTextLines together
+			      .setTextGravity(Gravity.CENTER_VERTICAL)         //only text def  Gravity.CENTER,contain icon Gravity.CENTER_VERTICAL
+			      .build();
+                   String msg="兴趣点："+point+"\n"
+					+ "轨迹："+track+"\n"
+					+ "公共设施："+service;
+			NiftyNotificationView.build(this,msg, Effects.thumbSlider,R.id.mLyout,cfg)
+			      .setIcon(R.drawable.law)               //remove this line ,only text
+			      .setOnClickListener(new View.OnClickListener() {
+			      @Override
+			      public void onClick(View view) {
+			      //add your code
+			      }
+			      })
+			      .show();         
+	}
+	private void getservicelbs() {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try{
+				// TODO Auto-generated method stub
+				getservicelbsnet g=new getservicelbsnet();
+        		String jsonstring1=g.getservicelbs();
+            if(jsonstring1!=null){
+            	jsonstring=jsonstring1;	
+            	result="1";
+            }else{
+            	result="0";
+              }
+			} catch (Exception e) {
+			// TODO: handle exception
+			result="0";
+		      }finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = SERVICE_LBS;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+	private void getredslbs() {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try{
+				// TODO Auto-generated method stub
+				getredslbsnet g=new getredslbsnet();
+        		String jsonstring1=g.getredslbs();
+            if(jsonstring1!=null){
+            	jsonstring=jsonstring1;	
+            	result="1";
+            }else{
+            	result="0";
+              }
+			} catch (Exception e) {
+			// TODO: handle exception
+			result="0";
+		      }finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = REDS_LBS;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+	private void gettracklbs() {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try{
+				// TODO Auto-generated method stub
+				gettracklbsnet g=new gettracklbsnet();
+        		String jsonstring1=g.gettracklbs();
+            if(jsonstring1!=null){
+            	jsonstring=jsonstring1;	
+            	result="1";
+            }else{
+            	result="0";
+              }
+			} catch (Exception e) {
+			// TODO: handle exception
+			result="0";
+		      }finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = TRACK_LBS;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+	
+	private void getinfo() {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try{
+				// TODO Auto-generated method stub
+				getservicelbsnet g=new getservicelbsnet();
+        		String jsonstring1=g.getinfoThree();
+            if(jsonstring1!=null){
+            	jsonstring=jsonstring1;	
+            	result="1";
+            }else{
+            	result="0";
+              }
+			} catch (Exception e) {
+			// TODO: handle exception
+			result="0";
+		      }finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = INFO;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+	protected void showservice(ArrayList<service> servicelbs2) {
+		// TODO Auto-generated method stub
+		if(servicelbs2.size()>0&&servicelbs2!=null){
+		for(service service:servicelbs2){
+			LatLng L=new LatLng(service.getComx(),service.getComy());
+			BitmapDescriptor bitmap ;
+			switch (service.getType()) {
+			case 0:
+				 bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_route_nearby_food);
+				break;
+			case 1:
+				 bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_route_nearby_market);
+				break;
+			case 2:
+				 bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_route_nearby_toilet);
+				break;
+			default:
+				bitmap = BitmapDescriptorFactory.fromResource(R.drawable.bd_wallet_faq_icon);
+				break;
+			}
+		        //构建MarkerOption，用于在地图上添加Marker  
+		        OverlayOptions option= new MarkerOptions()  
+		            .position(L)  
+		            .icon(bitmap);  
+		        baiduMap.addOverlay(option);
+		  }
+		}
+	}
+	protected void showreds(ArrayList<com.whut.myMap.domain.redslbs> redslbs2) {
+		// TODO Auto-generated method stub
+		if(redslbs2.size()>0&&redslbs2!=null){
+		for(redslbs redslbs:redslbs2){
+			LatLng L=new LatLng(redslbs.getRedsx(), redslbs.getRedsy());
+			BitmapDescriptor bitmap = BitmapDescriptorFactory  
+		            .fromResource(R.drawable.flag);  
+		        //构建MarkerOption，用于在地图上添加Marker  
+		        OverlayOptions option= new MarkerOptions()  
+		            .position(L)  
+		            .icon(bitmap);  
+		        baiduMap.addOverlay(option);
+		}
+		}
+			}
+	protected void showtrack(ArrayList<listtracklbs> tracklbs2) {
+		// TODO Auto-generated method stub
+		if(tracklbs2.size()>0&&tracklbs2!=null){
+		for(listtracklbs list:tracklbs2){
+			lat=new ArrayList<LatLng>();
+			for(lbs lb:list.getListlbs()){
+				LatLng L=new LatLng(lb.getLbsx(), lb.getLbsy());
+				lat.add(L);	
+				Log.i("lbs", lb.getLbsx()+"  "+lb.getLbsy());
+			}
+			OverlayOptions polygonOption = new PolylineOptions().color(0xAA339900)
+	    			.points(lat);  	
+	        baiduMap.addOverlay(polygonOption);
+		}
+	}
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		mActionBar = getActionBar();
+	    mActionBar.setTitle(R.string.Mymap);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+	}
+}

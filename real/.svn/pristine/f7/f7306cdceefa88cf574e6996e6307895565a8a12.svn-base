@@ -1,0 +1,87 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+
+public class adviser implements Serializable {
+	private int adviser_id;
+	private String name;
+	private int servetime;
+	private String instruction;
+	private String weixin;
+	private String phone;
+	private String portrait;
+
+	public int getAdviser_id() {
+		return adviser_id;
+	}
+
+	public void setAdviser_id(int adviser_id) {
+		this.adviser_id = adviser_id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getServetime() {
+		return servetime;
+	}
+
+	public void setServetime(int servetime) {
+		this.servetime = servetime;
+	}
+
+	public String getInstruction() {
+		return instruction;
+	}
+
+	public void setInstruction(String instruction) {
+		this.instruction = instruction;
+	}
+
+	public String getWeixin() {
+		return weixin;
+	}
+
+	public void setWeixin(String weixin) {
+		this.weixin = weixin;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getPortrait() {
+		return portrait;
+	}
+
+	public void setPortrait(String portrait) {
+		this.portrait = portrait;
+	}
+
+	public adviser(int adviser_id, String name, int servetime, String instruction, String weixin, String phone,
+			String portrait) {
+		super();
+		this.adviser_id = adviser_id;
+		this.name = name;
+		this.servetime = servetime;
+		this.instruction = instruction;
+		this.weixin = weixin;
+		this.phone = phone;
+		this.portrait = portrait;
+	}
+
+	public adviser() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+}

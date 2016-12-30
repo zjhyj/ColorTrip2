@@ -1,0 +1,45 @@
+package com.whut.net;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.whut.myMap.domain.huifubean;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.utils.httpclient;
+
+public class changeConcern {
+	 public static String changeFocus(Map<String, String> param){
+		 try {
+				httpclient httpclient=new httpclient();
+				return httpclient.sendPost(new url().geturl()+"/servlet/changeconcern", param);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			
+	    }	
+	 public static String returnConcern(Map<String, String> param){
+		 try {
+				httpclient httpclient=new httpclient();
+				return httpclient.sendPost(new url().geturl()+"/servlet/returconcern", param);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			
+	    }	
+	 public static String returnListConcern(){
+		 try {
+				httpclient httpclient=new httpclient();
+				return httpclient.sendGet(new url().geturl()+"/servlet/returnlistconcern");
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			
+	    }	
+}

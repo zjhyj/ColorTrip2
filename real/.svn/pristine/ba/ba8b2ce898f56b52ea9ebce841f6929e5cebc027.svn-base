@@ -1,0 +1,275 @@
+package com.whut.myMap;
+
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.TakePhoto.GridAdapter;
+import com.whut.myMap.domain.adviser;
+import com.whut.myMap.domain.adviserselect;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.userall;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.entites.user;
+import com.whut.myMap.serverce.Redservice;
+import com.whut.myMap.utils.Bimp;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.getredsbytimenet;
+import com.whut.net.returnlistadviser;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+public class PersonalAdviserMain2 extends Activity {
+	private ActionBar mActionBar;
+	private adviser adv;
+	private static final int USE_TIME = 0;
+	private final int SHOW_RESPONSE = 1;
+	String adviserselect;
+	protected static String jsonstring;
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case USE_TIME:
+				Log.i("zai", "enene2");
+				if (Integer.parseInt((String) msg.obj) == 1) {
+					Log.i("zai", "enene");
+					Log.i("zai", "enene3");
+
+					gsonutil gson = new gsonutil();
+					adviserselect = jsonstring;
+
+					show();
+				} else {
+					return;
+				}
+				break;
+
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if (Integer.parseInt((String) msg.obj) == 1) {
+				} else {
+					Toast.makeText(PersonalAdviserMain2.this, "请检查您的网络！", 0).show();
+				}
+				break;
+
+			}
+		}
+	};
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		View parentView = getLayoutInflater().inflate(R.layout.adviser_main, null);
+		setContentView(parentView);
+		getData();
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		adv = (adviser) bundle.getSerializable("adviser");
+		ImageView portrait = (ImageView) findViewById(R.id.portrait);
+		TextView name = (TextView) findViewById(R.id.name);
+		TextView serve = (TextView) findViewById(R.id.serve);
+		TextView weixin = (TextView) findViewById(R.id.weixin);
+		TextView phone = (TextView) findViewById(R.id.phone);
+		TextView instruction = (TextView) findViewById(R.id.instruction);
+		RelativeLayout pop = (RelativeLayout) findViewById(R.id.ll_popup);
+		pop.setVisibility(View.GONE);
+		try {
+			DisplayImageOptions options = new DisplayImageOptions.Builder()//
+					.showImageOnLoading(R.drawable.plugin_camera_no_pictures) // 加载中显示的默认图片
+					.showImageOnFail(R.drawable.background_failed) // 设置加载失败的默认图片
+					.cacheInMemory(true) // 内存缓存
+					.bitmapConfig(Config.RGB_565)// 设置最低配置
+					.build();
+			ImageLoader.getInstance().displayImage(adv.getPortrait(), portrait, options);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		name.setText(adv.getName());
+		serve.setText("服务" + adv.getServetime() + "次");
+		instruction.setText(adv.getInstruction());
+		weixin.setText(adv.getWeixin());
+		phone.setText(adv.getPhone());
+
+	}
+
+	protected void show() {
+		// TODO Auto-generated method stub
+		 String d1 = adviserselect;
+		SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String d2 = inputFormat.format(new Date());
+		long m =0;
+		
+		 try {
+			 m = inputFormat.parse(d2).getTime() - inputFormat.parse(d1).getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(jsonstring+"wo");
+		if (m / (1000 * 60 * 60 * 24) >= 15) {
+			AlertDialog.Builder builder = new Builder(PersonalAdviserMain2.this);
+			builder.setMessage("专属顾问已经为您服务15天了，请问您对TA的服务满意吗？");
+			builder.setNegativeButton("更换顾问", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO 删除选择
+					Intent intent = new Intent(PersonalAdviserMain2.this, AdviserComment.class);
+					intent.putExtra("adviser", adv.getAdviser_id());
+					startActivity(intent);
+				}
+			});
+			builder.setPositiveButton("非常满意", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO 续期
+					update();
+					Toast.makeText(getApplicationContext(), "感想您的支持", 0).show();
+				}
+			});
+			builder.create().show();
+		}
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.personal_adviser);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+	}
+
+	protected void update() {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			String result;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					Map<String, String> param = new HashMap<String, String>();
+					param.put("adviserid", adv.getAdviser_id() + "");
+					String jsonstring1 = returnlistadviser.updateAdviser(param);
+					if (jsonstring1 != null && jsonstring1.length() > 0) {
+						jsonstring = jsonstring1;
+						result = "1";
+					} else {
+						result = "0";
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					result = "0";
+				} finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = SHOW_RESPONSE;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+	protected void getData() {
+		// TODO Auto-generated method stub
+		new Thread(new Runnable() {
+			String result;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					Map<String, String> param = new HashMap<String, String>();
+					String jsonstring1 = returnlistadviser.returnAdviser();
+					if (jsonstring1 != null && jsonstring1.length() > 0) {
+						jsonstring = jsonstring1;
+						result = "1";
+					} else {
+						result = "0";
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+					result = "0";
+				} finally {
+					Log.i("result", result.toString());
+					Message message = new Message();
+					message.what = USE_TIME;
+					message.obj = result.toString();
+					handler.sendMessage(message);
+				}
+			}
+		}).start();
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		System.out.println("按下了back键   onBackPressed()");
+		showPre();
+	}
+
+	public void showPre() {
+		// TODO Auto-generated method stub
+		finish();
+		overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+}

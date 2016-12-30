@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/post"
+        android:orderInCategory="100"
+        android:title="分享"
+          android:icon="@drawable/upload27"  
+        android:showAsAction="always"/>
+
+</menu>

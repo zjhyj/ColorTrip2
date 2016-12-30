@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contacts_items"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical"
+    android:padding="2dp"
+    android:background="@drawable/bg_pic_cell" >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+        <ImageView
+            android:id="@+id/imgHead"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:layout_marginLeft="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_launcher" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp">
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:singleLine="true"
+                android:text="Tom"
+                android:textSize="16.0sp" />
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="0.2dip"
+                android:layout_marginTop="0dip"
+                android:layout_below="@id/tvName"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="13:32"
+                android:textColor="#ffcccccc"
+                android:textSize="12sp" />                              
+            <TextView
+                android:id="@+id/tvZan"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:singleLine="true"
+                android:gravity="center_horizontal" 
+                android:text="0"
+                android:textSize="15sp"
+                android:textColor="#000000"/>
+            <ImageView
+                android:id="@+id/like"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@id/tvZan"
+                android:scaleType="centerInside"
+                android:src="@drawable/good_main" />      
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       
+        android:text="Hello world"
+        android:textSize="15sp" >
+    </TextView>
+
+    <com.whut.myMap.adapter.SpeakGridView
+        android:id="@+id/tvGridview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:gravity="center"
+        android:numColumns="3"
+        android:horizontalSpacing="2dp"
+        android:verticalSpacing="4dp"
+        android:stretchMode="columnWidth"/>
+    <RelativeLayout 
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+    <ImageView 
+        android:id="@+id/comment_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:src="@drawable/speak_write_comment"
+        android:scaleType="centerInside"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="3dp"
+        />
+    
+    </RelativeLayout>
+    <View
+        android:id="@+id/lastLine2"
+        android:layout_width="fill_parent"
+        android:layout_height="4dp"
+        android:background="#ffffff" />
+
+    <View
+        android:id="@+id/lastLine3"
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#ffbfbfbf" />
+    
+
+</LinearLayout>

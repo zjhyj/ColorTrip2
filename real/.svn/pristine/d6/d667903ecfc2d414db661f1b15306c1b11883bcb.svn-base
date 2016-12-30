@@ -1,0 +1,63 @@
+package text;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.test.AndroidTestCase;
+import android.util.Log;
+
+import com.whut.myMap.dao.lbsdao;
+import com.whut.myMap.dao.trackdao;
+import com.whut.myMap.db.sqliteopen;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.picture;
+import com.whut.myMap.entites.track;
+import com.whut.myMap.serverce.Redservice;
+import com.whut.myMap.serverce.trackservice;
+import com.whut.net.addtracknet;
+import com.whut.net.loginnet;
+	public class Text extends AndroidTestCase {
+		public void test() {
+			// 数据库什么时候创建
+			sqliteopen openHelper = new sqliteopen(getContext());
+			// 第一次连接数据库时创建数据库文件. onCreate会被调用
+		openHelper.getReadableDatabase();
+		}
+		public void  textgetreds() {
+			Redservice service=new Redservice(getContext());
+			List<redsbean> redslist=  service.getreds(getContext());
+			if(redslist!=null){
+				for(picture pic :redslist.get(0).getListmap()){
+					Log.i("id",pic.getImgurl()); 
+					Log.i("id", pic.getReds_id()+"");
+					Log.i("id", redslist.get(0).getReds().getReds_id()+"");
+				}	 
+		    }	
+			}
+		public void  textdelete(){
+			trackservice service=new trackservice(getContext());
+			service.deletetrack(getContext());
+		}
+		public void textgettrackbeannet() {
+			List<lbs> list=new ArrayList<lbs>();
+			lbsdao lbsdao=new lbsdao(getContext());
+			list=lbsdao.getlbsbytrackid(0);
+			Log.i("LBSLENGTH", list.size()+"");
+			addtracknet addtracknet=new addtracknet();
+			addtracknet.addtrack(list, new track(0, 1, "hello words",null, 1));
+		}
+		public void textgettrack() {
+			List<track> list=new ArrayList<track>();
+			trackdao trackdao=new trackdao(getContext());
+			list=trackdao.gettrack();
+			System.out.print(list.size());
+			Log.i("LBSLENGTH", list.size()+"");
+		}
+		public void textgettrackbean() {
+			List<lbs> list=new ArrayList<lbs>();
+			lbsdao lbsdao=new lbsdao(getContext());
+			list=lbsdao.getlbsbytrackid(64);
+			Log.i("LBSLENGTH", list.size()+"");
+		}
+	}

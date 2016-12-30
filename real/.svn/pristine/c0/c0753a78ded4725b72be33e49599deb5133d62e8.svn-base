@@ -1,0 +1,38 @@
+package com.whut.myMap.domain;
+
+import java.io.Serializable;
+import com.whut.myMap.entites.*;
+public class userall implements Serializable{
+	 private user user;
+	 private int fans;
+	 private int medal;
+	public user getUser() {
+		return user;
+	}
+	public void setUser(user user) {
+		this.user = user;
+	}
+	public int getFans() {
+		return fans;
+	}
+	public void setFans(int fans) {
+		this.fans = fans;
+	}
+	public int getMedal() {
+		return medal;
+	}
+	public void setMedal(int medal) {
+		this.medal = medal;
+	}
+	public userall(user user, int fans, int medal) {
+		super();
+		this.user = user;
+		this.fans = fans;
+		this.medal = medal;
+	}
+	public userall() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	 
+	}

@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background"
+    android:id="@+id/layout">
+<ImageView 
+        android:id="@+id/logo"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/ic_launcher"
+        android:scaleType="fitXY"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"/>
+    <TextView
+        android:id="@+id/la_btn_forget"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:clickable="true"
+        android:text="忘记密码？"
+        android:textColor="#ffffff" />
+
+    <EditText
+        android:id="@+id/la_et_name"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:layout_margin="5dp"
+        android:hint="请输入手机号码"
+        android:inputType="phone"
+        android:padding="3dp"
+        android:drawableLeft="@drawable/login_me"
+        android:singleLine="true"
+        android:textColor="#000000" 
+        android:background="@null"/>
+    
+<View 
+    android:id="@+id/line1"
+    android:layout_below="@id/la_et_name"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="#6fcccccc"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    />
+    <EditText
+        android:id="@+id/la_et_password"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/line1"
+        android:hint="请输入密码"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:textColor="#000000"
+        android:padding="3dp"
+        android:drawableLeft="@drawable/login_lock"
+        android:background="@null" 
+         android:layout_marginRight="5dp"
+         android:layout_marginLeft="5dp"/>
+<View 
+    android:id="@+id/line2"
+    android:layout_below="@id/la_et_password"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="#6fcccccc"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    />
+    <Button
+        android:id="@+id/la_btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/line2"
+        android:onClick="la_btn_login_click"
+        android:text="登录"
+        android:background="@drawable/exit_button"
+        android:textColor="@android:color/white" 
+          android:layout_marginLeft="15dp"
+    android:layout_marginRight="15dp"/>
+
+    <LinearLayout
+        android:id="@+id/al_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/la_btn_login"
+        android:orientation="horizontal" >
+
+        <CheckBox
+            android:id="@+id/la_cb_remerber_pwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="保存密码"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/la_btn_reg"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:onClick="la_btn_reg_click"
+            android:text="注册"
+           android:layout_marginRight="15dp"
+           android:layout_marginTop="10dp"
+            android:background="@drawable/register_btn"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+
+</RelativeLayout>

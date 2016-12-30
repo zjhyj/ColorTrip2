@@ -1,0 +1,56 @@
+package com.whut.myMap.entites;
+
+public class comment {
+	private int huifu_id;
+	private int huifu_user_id;  
+	private int huifu_user_commented;//null£¿
+	private int type;
+	private int dongtai_id;
+	
+	private String hfuwords;
+	private String hfutime;
+	
+	public int getHuifu_id() {
+		return huifu_id;
+	}
+	public void setHuifu_id(int huifu_id) {
+		this.huifu_id = huifu_id;
+	}
+	public int getHuifu_user_id() {
+		return huifu_user_id;
+	}
+	public void setHuifu_user_id(int huifu_user_id) {
+		this.huifu_user_id = huifu_user_id;
+	}
+	public int getHuifu_user_commented() {
+		return huifu_user_commented;
+	}
+	public void setHuifu_user_commented(int huifu_user_commented) {
+		this.huifu_user_commented = huifu_user_commented;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	public int getDongtai_id() {
+		return dongtai_id;
+	}
+	public void setDongtai_id(int dongtai_id) {
+		this.dongtai_id = dongtai_id;
+	}
+	public String getHfuwords() {
+		return hfuwords;
+	}
+	public void setHfuwords(String hfuwords) {
+		this.hfuwords = hfuwords;
+	}
+	public String getHfutime() {
+		return hfutime;
+	}
+	public void setHfutime(String hfutime) {
+		this.hfutime = hfutime;
+	}
+	
+}

@@ -1,0 +1,194 @@
+package com.whut.myMap;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.baidu.navisdk.model.params.MsgDefine;
+import com.igexin.sdk.PushManager;
+import com.whut.myMap.R;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.entites.reds;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.entites.user;
+import com.whut.myMap.utils.LoginUtils;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.addredsnet;
+import com.whut.net.loginnet;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.opengl.ETC1;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class LoginActivity extends Activity {
+	private static final String TAG = "LoginActivity";
+	private EditText etNumber;
+	private EditText etPassword;
+	private CheckBox cbRemerberPWD;
+	private TextView etForget;
+	String jsonString;
+	private final int SHOW_RESPONSE=0;
+	private Handler handler=new Handler(){
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if(msg.obj!=null){
+					Log.i("zai", "enene");
+					if(Integer.parseInt((String) msg.obj)==1){
+						Log.i("zai", "enene3");
+						gsonutil gson=new gsonutil();
+						 user temp=(user) gson.getobject(jsonString, user.class);
+						 saveUserInfo(temp);
+						checkAndLog();
+						}
+					else if(Integer.parseInt((String) msg.obj)==0){
+						Log.i("zai", "enene4");
+						Toast.makeText(getApplication(), "密码不对，登录失败！", 1).show();
+						return;
+					}else{
+						Toast.makeText(getApplication(), "网络异常，请检查网络！！", 1).show();
+						return;
+					}
+				}
+			}	
+		}	
+	};
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_login);
+		PushManager.getInstance().initialize(getApplicationContext());
+		etNumber = (EditText) findViewById(R.id.la_et_name);
+		etPassword = (EditText) findViewById(R.id.la_et_password);
+		cbRemerberPWD = (CheckBox) findViewById(R.id.la_cb_remerber_pwd);
+		etForget=(TextView) findViewById(R.id.la_btn_forget);
+		etForget.setOnClickListener(new OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(LoginActivity.this,ResetPassword.class);
+				startActivity(intent);
+			}
+		});
+		Map<String, String> userInfoMap = LoginUtils.getUserInfo(this);
+		SharedPreferences sPreferences=this.getSharedPreferences("log", MODE_PRIVATE);
+		Boolean check=sPreferences.getBoolean("check",false);
+		if (check==true) {
+			cbRemerberPWD.setChecked(true);
+			etNumber.setText(userInfoMap.get("number"));
+			etPassword.setText(userInfoMap.get("password"));
+		}
+	}
+	protected void saveUserInfo(user temp) {
+		// TODO Auto-generated method stub
+//		1、打开Preferences，名称为setting，如果存在则打开它，否则创建新的Preferences
+		SharedPreferences userPreferences = getSharedPreferences("userInfo", 0);
+//		2、让setting处于编辑状态
+		SharedPreferences.Editor editor = userPreferences.edit();
+//		3、存放数据
+		editor.putInt(url.SPUSER_ID,temp.getUser_id());
+		editor.putString(url.SPUSER_NAME,temp.getUsername());
+		editor.putString(url.SPUSER_IMAGE,temp.getUserimage());
+		try {
+			editor.putString(url.SPUSER_PERSONAL, temp.getPersonal());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+//		4、完成提交
+		editor.commit();
+		 userPreferences = getSharedPreferences("clientid", 0);
+		 editor = userPreferences.edit();
+		editor.putString(url.SPUSER_CLIENTID,temp.getClientid());
+		editor.commit();
+		
+	}
+	public void la_btn_login_click(View v) {
+		// 执行登录的操作
+
+		// 1. 取出号码和密码
+		final String number = etNumber.getText().toString().trim();
+		final String password = etPassword.getText().toString().trim();
+
+		if (TextUtils.isEmpty(number) || TextUtils.isEmpty(password)) {
+			// 弹出吐司
+			Toast.makeText(this, "请正确输入", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		// 2. 判断记住密码是否被选中, 如果被选中, 存起来
+		if (cbRemerberPWD.isChecked()) {
+			// 当前需要记住密码
+			Log.i(TAG, "记住密码: " + number + ", " + password);
+			boolean isSuccess = LoginUtils.saveUserInfo(this, number, password,cbRemerberPWD.isChecked());
+			if (isSuccess) {
+				Toast.makeText(this, "保存成功", 0).show();
+			} else {
+				Toast.makeText(this, "保存失败", 0).show();
+			}
+		}
+		// 3. 登陆成功	
+		new Thread(new Runnable() {	
+			String result;
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					Map<String, String> param=new HashMap<String, String>();
+					String cid=PushManager.getInstance().getClientid(getApplicationContext());
+					param.put("username", number+"");
+					param.put("password", password+"");
+					param.put("clientid", cid);
+		            String jsonstring1;
+		            jsonstring1=loginnet.login(param);
+		            System.out.println(jsonstring1+"数据");
+		            if(jsonstring1!=null&&jsonstring1.length()>0){
+		              	jsonString=jsonstring1;	
+		              	result="1";
+		              }else{
+		              	result="0";
+		              	return;
+		              }
+					} catch (Exception e) {
+					// TODO: handle exception
+					result="2";
+				}finally{
+			Log.i("result",result.toString());
+			Message message=new Message();
+			message.what=SHOW_RESPONSE;
+			message.obj=result.toString();		
+			handler.sendMessage(message);	
+				}				
+			}
+		}).start();	
+	}
+	private void checkAndLog()
+	{
+		Intent intent = new Intent(this,HomeActivity.class);
+		startActivity(intent);
+		finish();
+	}	
+	public void la_btn_reg_click(View view){
+		Intent intent = new Intent(this,RegisterActivity.class);
+		startActivity(intent);
+	}
+}

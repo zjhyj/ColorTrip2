@@ -1,0 +1,63 @@
+ <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.whut.myMap.Help" >
+    
+        <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="分享游记" 
+        android:layout_marginTop="10dp"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginLeft="35dp"
+        android:lineSpacingExtra="10dp"
+      />
+         <ImageView 
+           android:layout_height="460dp"
+           android:layout_width="match_parent"
+           android:scaleType="fitXY"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp"
+           android:layout_marginTop="20dp"
+           android:layout_gravity="center_horizontal"
+           android:src="@drawable/nin"
+           />
+            <ImageView 
+          android:layout_height="460dp"
+           android:layout_width="match_parent"
+           android:scaleType="fitXY"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp"
+           android:layout_marginTop="20dp"
+           android:layout_gravity="center_horizontal"
+           android:src="@drawable/thre"
+           />
+    
+      <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" 保存分享时可以添加音乐与主题：" 
+        android:textSize="20sp"
+        android:textColor="#666666"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:lineSpacingExtra="5dp"
+      />
+       <ImageView 
+           android:layout_height="460dp"
+           android:layout_width="match_parent"
+           android:scaleType="fitXY"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp"
+           android:layout_marginTop="20dp"
+           android:layout_gravity="center_horizontal"
+           android:src="@drawable/eig"
+           />           
+      </LinearLayout>
+    </ScrollView>  

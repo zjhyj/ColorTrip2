@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="170dp"
+    android:orientation="horizontal"
+    android:padding="2dp"
+    android:background="@drawable/infowindow"
+    
+    >
+
+    <RelativeLayout
+        android:id="@+id/left"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_weight="3.99"
+        android:paddingBottom="15dp"
+        android:paddingTop="13dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="1dp"
+>
+        
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:singleLine="true"
+            android:text=" "
+            android:textColor="#bddd22"
+            android:textSize="15sp" />
+        <RelativeLayout
+            android:id="@+id/lon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/address"
+            android:paddingTop="3dp"
+            android:paddingBottom="5dp"
+             >
+
+            <ImageView
+                android:id="@+id/lengthimage"
+                android:layout_width="13sp"
+                android:layout_height="13sp"
+                android:src="@drawable/length" />
+
+            <TextView
+                android:id="@+id/length"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/lengthimage"
+                android:text=""
+                android:textColor="#c9dd22"
+                android:textSize="13sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="25sp"
+            android:layout_below="@id/address"
+            android:layout_toRightOf="@id/lon"
+            android:paddingTop="3dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="2dp" >
+
+            <ImageView
+                android:id="@+id/likeimage"
+                android:layout_width="13sp"
+                android:layout_height="13sp"
+                android:src="@drawable/icon_openmap_mark" />
+
+            <TextView
+                android:id="@+id/like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/likeimage"
+                android:text=""
+                android:textColor="#c9dd22"
+                android:textSize="13sp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout 
+        android:id="@+id/right"
+       android:layout_height="70dp"
+       android:layout_width="90dp"
+       android:layout_weight="1"
+       android:paddingRight="15dp"
+       android:paddingLeft="1dp"
+       android:paddingBottom="5dp"
+        >
+        <View 
+        android:id="@+id/view"
+        android:layout_width="2dp"
+        android:layout_height="45dp"
+        android:background="#feecde"
+        android:layout_marginTop="11.5dp"
+        />       
+    <TextView 
+        android:id="@+id/more"
+        android:layout_width="88dp"
+        android:layout_height="70dp"
+        android:text="查看                     详情"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:textColor="#bce672"
+        />
+    </RelativeLayout>
+</LinearLayout >

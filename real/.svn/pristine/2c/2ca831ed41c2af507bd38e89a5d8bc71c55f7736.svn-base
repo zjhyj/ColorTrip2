@@ -1,0 +1,91 @@
+ <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.whut.myMap.Score" >
+    
+        <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">    
+       <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="积分制度与奖励" 
+        android:layout_marginTop="10dp"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginLeft="35dp"
+        android:lineSpacingExtra="10dp"
+      />
+           <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.用户可以通过分享游记等措施获得积分，积分可用来在商城购买代金券" 
+        android:textSize="20sp"
+        android:textColor="#666666"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:lineSpacingExtra="5dp"
+      /> 
+       <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="● 每发布一个兴趣点积分增加10." 
+        android:textSize="15sp"
+        android:textColor="#666666"
+        android:layout_marginLeft="70dp"
+        android:lineSpacingExtra="5dp"
+      /> 
+      <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="● 每发布一个游记积分增加30."
+        android:textSize="15sp"
+        android:textColor="#666666"
+        android:layout_marginLeft="70dp"
+           android:layout_marginRight="35dp"
+        android:lineSpacingExtra="5dp"
+      /> 
+          <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="● 每添加一个公共设施积分增加5."
+        android:textSize="15sp"
+        android:textColor="#666666"
+        android:layout_marginLeft="70dp"
+           android:layout_marginRight="35dp"
+        android:lineSpacingExtra="5dp"
+      /> 
+          <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="● 每关注或被关注一位用户积分增加20."
+        android:textSize="15sp"
+        android:textColor="#666666"
+        android:layout_marginLeft="70dp"
+           android:layout_marginRight="35dp"
+        android:lineSpacingExtra="5dp"
+      /> 
+       <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="● 用户的兴趣点被系统采用作为热点积分增加20" 
+        android:textSize="15sp"
+        android:textColor="#666666"
+        android:layout_marginLeft="70dp"
+           android:layout_marginRight="35dp"
+        android:lineSpacingExtra="5dp"
+      /> 
+      <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2.用户获得勋章后可以解锁游记模板，目前总共有四款模板，敬请期待更多新模板" 
+        android:textSize="20sp"
+        android:textColor="#666666"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:lineSpacingExtra="5dp"
+      />
+      </LinearLayout>
+    </ScrollView>  

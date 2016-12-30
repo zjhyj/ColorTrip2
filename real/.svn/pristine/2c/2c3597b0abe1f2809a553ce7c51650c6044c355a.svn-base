@@ -1,0 +1,19 @@
+package com.whut.myMap.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.whut.myMap.domain.jifenshop;
+
+public class JifenUtils {
+     public static List<jifenshop> getGoods(){
+    	 List<jifenshop> mList=new ArrayList<jifenshop>();
+    	 mList.add(new jifenshop(1, 10, 30));
+    	 mList.add(new jifenshop(2,30,100));
+    	 mList.add(new jifenshop(3, 50, 200));
+    	 mList.add(new jifenshop(4,100,500));
+    	 mList.add(new jifenshop(5, 200, 1000));
+    	 mList.add(new jifenshop(6, 500, 2000));
+    	 return mList;
+     }
+}

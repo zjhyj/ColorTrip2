@@ -1,0 +1,62 @@
+ package com.whut.myMap.domain;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class huifubean implements Serializable {
+//	 private int huifu_id;  自动增加
+	  private int source_id;
+	  private int type;
+	  private String date;
+	  private String huifuwords;
+	  private int huifu_user_commented;//null？
+	  private int huifu_user;
+	  private int huifu_id_before;
+	
+	public int getSource_id() {
+		return source_id;
+	}
+	public void setSource_id(int source_id) {
+		this.source_id = source_id;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public String getHuifuwords() {
+		return huifuwords;
+	}
+	public void setHuifuwords(String huifuwords) {
+		this.huifuwords = huifuwords;
+	}
+	public int getHuifu_user_commented() {
+		return huifu_user_commented;
+	}
+	public void setHuifu_user_commented(int huifu_user_commented) {
+		this.huifu_user_commented = huifu_user_commented;
+	}
+	public int getHuifu_user() {
+		return huifu_user;
+	}
+	public void setHuifu_user(int huifu_user) {
+		this.huifu_user = huifu_user;
+	}
+	public int getHuifu_id_before() {
+		return huifu_id_before;
+	}
+	public void setHuifu_id_before(int huifu_id_before) {
+		this.huifu_id_before = huifu_id_before;
+	}
+	 
+	
+
+	}

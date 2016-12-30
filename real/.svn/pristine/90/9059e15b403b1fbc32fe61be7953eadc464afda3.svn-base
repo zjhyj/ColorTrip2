@@ -1,0 +1,199 @@
+package com.whut.myMap;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.whut.myMap.adapter.CommentListViewAdapter_speak;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.net.favornet;
+import com.whut.net.getHuifuNet;
+import com.whut.net.praisenet;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+public class CommentList extends Activity {
+
+		private static String jsonstring;
+		private final int SHOW_RESPONSE_HUIFU = 1;
+		CommentListViewAdapter_speak myAdapter;
+		comment_message comment_message;
+		int track_id;
+		int Dongtai_User_id;
+		private ListView mListView;
+		List<comment_message> list = new ArrayList<comment_message>();
+		private Handler handler = new Handler() {
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case SHOW_RESPONSE_HUIFU:
+					Log.i("zai", "enene2");
+					if (Integer.parseInt((String) msg.obj) == 1) {
+						Log.i("zai", "enene");
+						Log.i("zai", "enene3");
+						gsonutil gson = new gsonutil();
+						Log.i("json", jsonstring);
+						System.out.println(jsonstring);
+						List<comment_message> temp = (ArrayList<comment_message>) gson.fromJsonList(jsonstring,
+								comment_message.class);
+						list.clear();
+						list.addAll(temp);
+						myAdapter.notifyDataSetChanged();
+					} else {
+						Toast.makeText(getApplication(), "网络异常，请检查网络！！", 0).show();
+						return;
+					}
+					break;
+				}
+			}
+
+		};
+
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			// TODO Auto-generated method stub
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.listview_container);
+			Intent intent = getIntent();
+			Bundle bundle = intent.getExtras();
+			comment_message = (com.whut.myMap.domain.comment_message) bundle.getSerializable("comment");
+			
+			track_id = comment_message.getSource_id();
+			Dongtai_User_id = comment_message.getHuifu_user_id();
+			getData();
+			Log.i("Speak_main", "" + track_id);
+			myAdapter = new CommentListViewAdapter_speak(list, track_id, this);
+			mListView = (ListView) findViewById(R.id.fs_listview);
+			// 把view层对象ListView和控制器BaseAdapter关联起来
+			mListView.setAdapter(myAdapter);
+			mListView.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					Intent intent = new Intent(CommentList.this, WriteComment.class);
+					comment_message cMessage = new comment_message();
+					Bundle bundle = new Bundle();
+					cMessage.setType(1);
+					cMessage.setSource_id(track_id);
+					cMessage.setCeduserid(list.get(position).getHuifu_user_id());
+					cMessage.setCedusername(list.get(position).getHuifu_user_name());
+					cMessage.setHuifu_id(list.get(position).getHuifu_id());
+					intent.putExtra("tp", 0);
+					bundle.putSerializable("comment_user_who", cMessage);
+					intent.putExtras(bundle);
+					startActivityForResult(intent, 0);
+				}
+			});
+		}
+
+		@Override
+		public boolean onCreateOptionsMenu(Menu menu) {
+			// TODO Auto-generated method stub
+	      super.onCreateOptionsMenu(menu);
+			getMenuInflater().inflate(R.menu.route_comment, menu);
+			ActionBar mActionBar = getActionBar();
+			mActionBar.setTitle("评论列表");
+			mActionBar.setDisplayHomeAsUpEnabled(true);
+			mActionBar.setDisplayShowHomeEnabled(false);
+			return true;
+		}
+
+		@Override
+		public boolean onOptionsItemSelected(MenuItem item) {
+			// TODO Auto-generated method stub
+			switch (item.getItemId()) {
+			case android.R.id.home:
+				finish();
+				this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+				return true;
+			case R.id.comment:
+				Intent intent = new Intent(CommentList.this, WriteComment.class);
+				comment_message cMessage = new comment_message();
+				cMessage.setCeduserid(comment_message.getHuifu_user_id());
+				cMessage.setSource_id(track_id);
+				cMessage.setType(1);
+				Bundle bundle = new Bundle();
+				bundle.putSerializable("comment_user_who", cMessage);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, 0);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+			}
+		}
+
+		/**
+		 * 
+		 * 评论 评论，日期，被评头像，被评人名字
+		 * 
+		 * @return
+		 */
+		private void getData() {
+			new Thread(new Runnable() {
+				private String result;
+
+				@Override
+				public void run() {
+					try {
+						// TODO Auto-generated method stub
+						Log.i("comment", track_id + "");
+						Map<String, String> param = new HashMap<String, String>();
+						param.put("source_id", track_id + "");
+						param.put("type", 1 + "");
+						getHuifuNet gHuifuNet = new getHuifuNet();
+						String jsonstring1 = gHuifuNet.getHuifu(param);
+						if (jsonstring1 != null && jsonstring1.length() > 0) {
+							jsonstring = jsonstring1;
+							result = "1";
+						} else {
+							result = "0";
+							return;
+						}
+					} catch (Exception e) {
+						// TODO: handle exception
+						result = "2";
+					} finally {
+						Log.i("result", result.toString());
+						Message message = new Message();
+						message.what = SHOW_RESPONSE_HUIFU;
+						message.obj = result.toString();
+						handler.sendMessage(message);
+					}
+				}
+			}).start();
+		}
+
+		@Override
+		protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+			// TODO Auto-generated method stub
+			if (resultCode != Activity.RESULT_OK) {// result is not correct
+				return;
+			} else {
+				if (requestCode == 0) {
+					Bundle bundle = data.getExtras();
+					comment_message cMessage = (comment_message) bundle.getSerializable("comment");
+					list.add(0, cMessage);
+					myAdapter.notifyDataSetChanged();
+				}
+
+			}
+		}
+	
+}

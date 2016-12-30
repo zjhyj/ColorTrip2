@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:makeramen="http://schemas.android.com/apk/res/com.whut.myMap"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.whut.myMap.Savetrack" >
+
+    <ScrollView
+        android:id="@+id/ScrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp" >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="140dp"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/edit"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:background="@drawable/bg_edittext"
+                android:gravity="top"
+                android:hint="给这个路径写点描述吧。。。"
+                android:maxLength="140" />
+        </TableRow>
+    </ScrollView>
+
+    <com.makeramen.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:padding="2dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/no_background"
+        makeramen:border_color="@android:color/transparent"
+        makeramen:border_width="1dip"
+        makeramen:corner_radius="10dip" />
+
+    <Button
+        android:id="@+id/music"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top"
+        android:text="插入音乐" 
+        android:layout_margin="3dp"
+         android:background="@drawable/normal_button"
+          android:textColor="@drawable/spinner"
+        android:textSize="18sp" />
+    
+    <Button
+        android:id="@+id/baocun"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top"
+        android:text="保存" 
+        android:layout_margin="3dp"
+         android:background="@drawable/normal_button"
+          android:textColor="@drawable/spinner"
+        android:textSize="18sp" />
+
+</LinearLayout>

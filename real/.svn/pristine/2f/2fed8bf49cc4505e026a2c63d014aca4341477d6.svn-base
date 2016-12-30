@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+     <item
+        android:id="@+id/newtravel"
+        android:orderInCategory="100"
+        android:title="新建游记"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/post"
+        android:orderInCategory="100"
+        android:title="发布游记"
+        android:showAsAction="always"/>
+
+</menu>

@@ -1,0 +1,103 @@
+package com.whut.myMap.adapter;
+
+import java.util.List;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.R;
+import com.whut.myMap.adapter.CommentListViewAdapter_my.ViewHolder;
+import com.whut.myMap.domain.concernview;
+import com.whut.myMap.domain.show_comment;
+
+import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
+import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class ConcernListAdapter extends BaseAdapter{
+	private List<concernview> mList;
+	private Context mContext;
+//	private int user_id;
+
+	public ConcernListAdapter(List<concernview> mList,
+			Context mContext) {
+		// TODO Auto-generated constructor stub
+		super();
+		this.mList = mList;
+		this.mContext = mContext;
+//		this.user_id=user_id;
+	}
+
+	@Override
+	public int getCount() {
+		return this.mList.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return position;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+
+	// final ListViewItem item = getItem(position); 缺少item项？？
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder holder = null;
+		if (convertView == null) {
+			holder = new ViewHolder();
+			LayoutInflater mInflater = LayoutInflater.from(mContext);
+			convertView = mInflater.inflate(R.layout.concern_item, null);
+			holder.ImageView = (ImageView) convertView
+					.findViewById(R.id.head);
+			holder.name = (TextView) convertView.findViewById(R.id.username);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		concernview sp = mList.get(position);
+		System.out.println(sp.getUserimage());
+		if (mList != null) {
+			if (holder.ImageView != null) {
+				// 设置图片
+				if (sp.getUserimage()== null) {
+					holder.ImageView.setImageBitmap(BitmapFactory
+							.decodeResource(mContext.getResources(),
+									R.drawable.loadfailed));
+				} else {
+					DisplayImageOptions options = new DisplayImageOptions.Builder()//
+							.showImageOnLoading(R.drawable.loadpic) // 加载中显示的默认图片
+							.showImageOnFail(R.drawable.loadfailed) // 设置加载失败的默认图片
+							.cacheInMemory(true) // 内存缓存
+							.cacheOnDisk(true) // sdcard缓存
+							.bitmapConfig(Config.RGB_565)// 设置最低配置
+							.build();//
+					ImageLoader.getInstance().displayImage(sp.getUserimage(),
+							holder.ImageView, options);
+				}
+			}
+			if (holder.name != null) {
+				holder.name.setText(sp.getUsername());
+			}
+
+		}
+		return convertView;
+	}
+
+	public final class ViewHolder {
+		public ImageView ImageView;
+		public TextView name;
+	}
+
+
+}

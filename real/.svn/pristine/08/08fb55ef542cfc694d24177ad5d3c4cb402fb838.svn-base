@@ -1,0 +1,34 @@
+package com.whut.net;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import android.util.Log;
+
+import com.whut.myMap.domain.service;
+import com.whut.myMap.entites.picture;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.utils.gsonutil;
+import com.whut.myMap.utils.httpclient;
+
+public class addservicenet {
+		public void addservice(service service) {
+			// TODO Auto-generated method stub
+				try {
+    	httpclient http=new httpclient();
+		Map<String ,String > parsm=new HashMap<String, String>();	
+		gsonutil gson=new gsonutil();
+		String jsonString1=gson.createJsonString(service);
+		parsm.put("addservice",jsonString1);
+	    http.sendPost(new url().geturl()+"/servlet/addservice", parsm);
+		} catch (Exception e) {
+			//TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		  }
+	}		   	
+	
+}

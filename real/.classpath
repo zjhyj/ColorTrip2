@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="lib" path="libs/mta-sdk-1.6.2.jar"/>
+	<classpathentry kind="lib" path="libs/libammsdk.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/Android_SDK_V2.9.4/Android_SDK_V2.9.4/sample/libs/android-support-v4.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/apache-mime4j-0.6.jar"/>
+	<classpathentry kind="lib" path="F:/地图api/libs/BaiduLBS_Android.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/commons-codec.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/commons-dbutils-1.6.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/gson-2.3.1.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/httpcomponents-client-4.5.1-bin.zip"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/httpcomponents-core-4.4.3-bin.zip"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/httpmime-4.0.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/jstl.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/jstl-1.2.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/nineoldandroids-2.4.0.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/universal-image-loader-1.9.4.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/universal-image-loader-1.9.4-with-sources.jar"/>
+	<classpathentry kind="lib" path="E:/各种材料/Android.jar/httpcomponents-core-4.4.3-bin/httpcomponents-core-4.4.3/lib/httpcore-4.4.3.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

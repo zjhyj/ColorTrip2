@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/splash_act"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splash"
+    tools:context="com.whut.myMap.SplashActivity" >
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/text2"
+        android:layout_alignLeft="@+id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="34dp"
+        android:shadowColor="#ff000000"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:shadowRadius="5"
+        android:text="路漫漫其修远兮"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="190dp"
+        android:layout_toRightOf="@id/text"
+        android:shadowColor="#ff000000"
+        android:shadowDx="3"
+        android:shadowDy="3"
+        android:shadowRadius="5"
+        android:text="吾将上下而求索"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+</RelativeLayout>

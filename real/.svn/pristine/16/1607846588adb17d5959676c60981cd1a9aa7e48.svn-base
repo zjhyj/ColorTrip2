@@ -1,0 +1,134 @@
+package com.whut.myMap.adapter;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.R;
+import com.whut.myMap.domain.redsbean;
+import com.whut.myMap.domain.speak;
+import com.whut.myMap.utils.GridViewUtils;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.Config;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+/**
+ * 不知道用在哪里了，作模板用
+ * @author xxr
+ *
+ */
+public class SpeakListViewAdapter_route extends BaseAdapter {
+	private static final String TAG ="SpeakAdapter";
+	private List<redsbean> mList;
+	private Context mContext;
+
+	public SpeakListViewAdapter_route(List<redsbean> mList,
+			Context mContext) {
+		super();
+		this.mList = mList;
+		this.mContext = mContext;
+	}
+
+	@Override
+	public int getCount() {
+		if (mList == null) {
+			return 0;
+		} else {
+			return this.mList.size();
+		}
+	}
+
+	@Override
+	public Object getItem(int position) {
+		if (mList == null) {
+			return null;
+		} else {
+			return this.mList.get(position);
+		}
+	}
+
+	@Override
+	public long getItemId(int position) {
+		// TODO Auto-generated method stub
+		return position;
+	}
+//final ListViewItem item = getItem(position); 缺少item项？？
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder holder = null;
+		if (convertView == null) {
+			holder = new ViewHolder();
+			LayoutInflater mInflater = LayoutInflater.from(mContext);
+            convertView = mInflater.inflate(R.layout.speak_item, null);
+			holder.headImageView = (ImageView) convertView
+					.findViewById(R.id.imgHead);
+			holder.name=(TextView) convertView.findViewById(R.id.tvName);
+			holder.date=(TextView) convertView.findViewById(R.id.tvDate);
+			holder.content=(TextView) convertView.findViewById(R.id.tvContent);
+//			holder.praise=(Button) convertView.findViewById(R.id.btnPraise);
+//			holder.comment=(Button) convertView.findViewById(R.id.btnComment);
+//			holder.zhuanfa=(Button) convertView.findViewById(R.id.btnShouCang);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
+		redsbean sp=(redsbean) getItem(position);
+			if (this.mList != null) {
+				
+				if (holder.name != null) {
+					holder.name.setText(sp.getUsername());
+				}
+				if (holder.date != null) {
+					holder.date.setText(sp.getReds().getDate().substring(0, 16));
+				}
+				if (holder.content != null) {
+					holder.content.setText(sp.getReds().getWords());
+				}
+//				if (holder.praise != null) {
+//					holder.praise.setText("赞 " + sp.getReds().getZan());
+//				}
+				DisplayImageOptions options = new DisplayImageOptions.Builder()//
+				.showImageOnLoading(R.drawable.loadpic) // 加载中显示的默认图片
+				.showImageOnFail(R.drawable.loadfailed) // 设置加载失败的默认图片
+				.cacheInMemory(true) // 内存缓存
+				.cacheOnDisk(true) // sdcard缓存
+				.bitmapConfig(Config.RGB_565)// 设置最低配置
+				.build();//
+		ImageLoader.getInstance().displayImage(sp.getUrl(),
+				holder.headImageView, options);
+		}
+		return convertView;
+	}
+
+	/**
+	 * viewholder类，包含一个条目中所有控件
+	 */
+	public final class ViewHolder {
+		public ImageView headImageView;
+		public TextView name;
+		public TextView date;
+		public TextView content;
+		// public ImageView address_pic;
+		// public TextView address_location;
+		public Button comment;
+		public Button praise;
+		public Button zhuanfa;
+	}
+	
+
+}

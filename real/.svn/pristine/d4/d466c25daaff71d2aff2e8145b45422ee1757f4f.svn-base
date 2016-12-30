@@ -1,0 +1,298 @@
+package com.whut.myMap;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URI;
+
+import com.makeramen.RoundedImageView;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.url;
+import com.whut.myMap.serverce.trackservice;
+import com.whut.net.addtracknet;
+
+import android.text.Editable;
+import android.util.Log;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.MediaStore;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+public class sharetrack extends Activity {
+	private ActionBar mActionBar;
+	String str;
+	EditText edit;
+	RoundedImageView image;
+	private static trackbean trackbean;
+	private static Uri imageUri;
+	protected final int SHOW_RESPONSE = 0;
+	protected int CROP_SMALL_PICTURE = 3;
+	protected int CHOOSE_SMALL_PICTURE = 1;
+	protected int TAKE_SMALL_PICTURE = 2;
+	private PopupWindow pop = null;
+	private LinearLayout ll_popup;
+	private static String filelocation;// temp
+	static String fileName=null;																												// file
+	private View parentView;
+	static String imageurl=null;
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			Log.i("zai", "enene1");
+			switch (msg.what) {
+			case SHOW_RESPONSE:
+				Log.i("zai", "enene2");
+				if (msg.obj != null) {
+					Log.i("zai", "enene");
+					if (Integer.parseInt((String) msg.obj) == 1) {
+						Log.i("zai", "enene3");
+						Toast.makeText(getApplication(), "分享成功!", 1).show();
+						fileName=null;
+					} else {
+						Log.i("zai", "enene4");
+						Toast.makeText(getApplication(), "分享失败!", 1).show();
+					}
+				}
+			}
+		}
+	};
+
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		parentView = getLayoutInflater().inflate(R.layout.activity_savetrack, null);
+		setContentView(parentView);
+		Init();
+		if (url.externalMemoryAvailable()) {
+			 filelocation = Environment.getExternalStorageDirectory() + "/Myimage/";
+		}else {
+			 filelocation =  Environment.getDataDirectory() + "/Myimage/";
+		}
+		File file = new File(filelocation);
+		if (!file.exists())
+			file.mkdirs();
+		edit = (EditText) findViewById(R.id.edit);
+		image = (RoundedImageView) findViewById(R.id.image);
+		Button but = (Button) findViewById(R.id.baocun);
+		but.setText("分享");
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		trackbean = (com.whut.myMap.domain.trackbean) bundle.getSerializable("trackbean");
+		but.setOnClickListener(new mybutclick());
+		image.setOnClickListener(new selectPic());
+	}
+
+	public class mybutclick implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			try {
+				if (trackbean.getTrack().getTrack_id() != 0) {
+					str = edit.getText().toString();
+					Log.i("trackidsave", trackbean.getTrack().getTrack_id() + "");
+				}
+				new Thread(new Runnable() {
+					String result;
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try {
+							String imageurl=null;
+							addtracknet addtracksnet = new addtracknet();
+							trackbean.getTrack().setWords(str);
+							if(fileName!=null&&fileName.length()>0){
+							imageurl=filelocation+fileName+".jpg";
+							}else{
+								imageurl=null;
+							}
+							trackbean.getTrack().setBgurl(imageurl);
+							System.out.println(trackbean.getTrack().getBgurl());
+							result = addtracksnet.addtrackbean(trackbean, getApplication());
+						} catch (Exception e) {
+							// TODO: handle exception
+							result = "2";
+						} finally {
+							Log.i("result", result.toString());
+							Message message = new Message();
+							message.what = SHOW_RESPONSE;
+							message.obj = result.toString();
+							handler.sendMessage(message);
+						}
+					}
+				}).start();
+				finish();
+			} catch (Exception e) {
+				Toast.makeText(getApplication(), "分享失败，请重试！",0);
+			}
+		}
+	}
+	public void Init() {
+
+		pop = new PopupWindow(sharetrack.this);
+
+		View view = getLayoutInflater().inflate(R.layout.item_popupwindows, null);
+
+		ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup);
+
+		pop.setWidth(LayoutParams.MATCH_PARENT);
+		pop.setHeight(LayoutParams.WRAP_CONTENT);
+		pop.setBackgroundDrawable(new BitmapDrawable());
+		pop.setFocusable(true);
+		pop.setOutsideTouchable(true);
+		pop.setContentView(view);
+
+		RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.parent);
+		Button bt1 = (Button) view.findViewById(R.id.item_popupwindows_camera);
+		Button bt2 = (Button) view.findViewById(R.id.item_popupwindows_Photo);
+		Button bt3 = (Button) view.findViewById(R.id.item_popupwindows_cancel);
+		parent.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		bt1.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				fileName = String.valueOf(System.currentTimeMillis());
+				imageUri = Uri.fromFile(new File(filelocation, fileName + ".jpg"));
+				Intent intent1 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);// action
+				intent1.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+				startActivityForResult(intent1, TAKE_SMALL_PICTURE);
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		bt2.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				fileName = String.valueOf(System.currentTimeMillis());
+				imageUri = Uri.fromFile(new File(filelocation, fileName + ".jpg"));
+				Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
+				intent.setType("image/*");
+				intent.putExtra("crop", "true");
+				intent.putExtra("aspectX", 3);
+				intent.putExtra("aspectY", 2);
+				intent.putExtra("outputX", 600);
+				intent.putExtra("outputY", 400);
+				intent.putExtra("scale", true);
+				intent.putExtra("return-data", false);
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+				intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+				intent.putExtra("noFaceDetection", true); // no face detection
+				startActivityForResult(intent, CROP_SMALL_PICTURE);
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+		bt3.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				pop.dismiss();
+				ll_popup.clearAnimation();
+			}
+		});
+	}
+
+	public class selectPic implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			ll_popup.startAnimation(AnimationUtils.loadAnimation(sharetrack.this, R.anim.activity_translate_in));
+			pop.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
+		}
+	}
+	private void cropImageUri(Uri uri, int outputX, int outputY, int requestCode) {
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		intent.putExtra("crop", "true");
+		intent.putExtra("aspectX", 3);
+		intent.putExtra("aspectY", 2);
+		intent.putExtra("outputX", outputX);
+		intent.putExtra("outputY", outputY);
+		intent.putExtra("scale", true);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+		intent.putExtra("return-data", false);
+		intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+		intent.putExtra("noFaceDetection", true); // no face detection
+		startActivityForResult(intent, requestCode);
+	}
+
+	private Bitmap decodeUriAsBitmap(Uri uri) {
+		Bitmap bitmap = null;
+		try {
+			bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return bitmap;
+	}
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != Activity.RESULT_OK) {// result is not correct
+			return;
+		} else {
+			switch (requestCode) {
+
+			case 1:
+				cropImageUri(imageUri, 600, 400, CROP_SMALL_PICTURE);
+				break;
+			case 2:
+				cropImageUri(imageUri, 600, 400, CROP_SMALL_PICTURE);
+				break;
+			case 3:
+				if (imageUri != null) {
+					
+						Bitmap bitmap = decodeUriAsBitmap(imageUri);
+						image.setImageBitmap(bitmap);
+					}
+				break;
+				}
+				
+			}
+		}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu);
+		mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.sharetrack);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	}
+

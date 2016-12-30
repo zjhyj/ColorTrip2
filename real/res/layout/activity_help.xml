@@ -1,0 +1,150 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.whut.myMap.Help" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/re1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:clickable="true" 
+              android:background="@drawable/layout_selector">
+
+            <TextView
+                android:id="@+id/create"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="7dp"
+                android:text="创建游记"
+                android:textSize="16sp" />
+            <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/setting_array" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#cccccc" />
+
+        <RelativeLayout
+            android:id="@+id/re2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/view3"
+            android:clickable="true" 
+              android:background="@drawable/layout_selector">
+
+            <TextView
+                android:id="@+id/edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="7dp"
+                android:text="编辑游记"
+                android:textSize="16sp" />
+            <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/setting_array" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+         android:layout_height="0.5dp"
+            android:background="#cccccc" />
+
+        <RelativeLayout
+            android:id="@+id/re3"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:clickable="true" 
+              android:background="@drawable/layout_selector">
+
+            <TextView
+                android:id="@+id/finsih"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="7dp"
+                android:text="分享游记"
+                android:textSize="16sp" />
+            <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/setting_array" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="match_parent"
+          android:layout_height="0.5dp"
+            android:background="#cccccc" />
+
+        
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="match_parent"
+           android:layout_height="0.5dp"
+            android:background="#cccccc" />
+
+        <RelativeLayout
+            android:id="@+id/re6"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:clickable="true"
+              android:background="@drawable/layout_selector" >
+
+            <TextView
+                android:id="@+id/travelinfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="7dp"
+                android:text="查看周围旅游资源"
+                android:textSize="16sp" />
+            <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/setting_array" />
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/view6"
+            android:layout_width="match_parent"
+           android:layout_height="0.5dp"
+            android:background="#cccccc" />
+
+        
+
+        <View
+            android:id="@+id/view5"
+            android:layout_width="match_parent"
+           android:layout_height="0.5dp"
+            android:background="#cccccc" />
+    </LinearLayout>
+
+</ScrollView>

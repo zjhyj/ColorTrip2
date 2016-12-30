@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:makeramen="http://schemas.android.com/apk/res/com.whut.myMap"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/fs1"
+        android:layout_width="fill_parent"
+        android:layout_height="65dp"
+        android:clickable="true" >
+
+        <com.makeramen.RoundedImageView
+            android:id="@+id/img1"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/meili"
+            makeramen:border_color="@android:color/transparent"
+            makeramen:border_width="1dip"
+            makeramen:corner_radius="100dip" />
+        <TextView
+            android:id="@+id/apl1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/img1"
+            android:text="旅游新人"
+            android:textColor="#404040"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/apl11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/img1"
+            android:layout_below="@id/apl1"
+            android:text="发表5篇游记"
+            android:textColor="#404040"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/green_tick" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="#4fbfbfbf" />
+    </RelativeLayout>
+      <RelativeLayout
+        android:id="@+id/fs2"
+        android:layout_width="fill_parent"
+        android:layout_height="65dp"
+        android:clickable="true" >
+
+        <com.makeramen.RoundedImageView
+            android:id="@+id/img2"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/meili"
+            makeramen:border_color="@android:color/transparent"
+            makeramen:border_width="1dip"
+            makeramen:corner_radius="100dip" />
+
+        <TextView
+            android:id="@+id/apl22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/img2"
+            android:text="游记总点赞数超过100"
+            android:textColor="#404040"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/setting_array" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="#4fbfbfbf" />
+    </RelativeLayout>
+      <RelativeLayout
+        android:id="@+id/fs3"
+        android:layout_width="fill_parent"
+        android:layout_height="65dp"
+        android:background="@drawable/layout_selector"
+        android:clickable="true" >
+
+        <com.makeramen.RoundedImageView
+            android:id="@+id/img3"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/meili"
+            makeramen:border_color="@android:color/transparent"
+            makeramen:border_width="1dip"
+            makeramen:corner_radius="100dip" />
+
+        <TextView
+            android:id="@+id/apl33"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/img3"
+            android:text="拥有10名粉丝"
+            android:textColor="#404040"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/setting_array" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="#4fbfbfbf" />
+    </RelativeLayout>
+      <RelativeLayout
+        android:id="@+id/fs4"
+        android:layout_width="fill_parent"
+        android:layout_height="65dp"
+        android:background="@drawable/layout_selector"
+        android:clickable="true" >
+
+        <com.makeramen.RoundedImageView
+            android:id="@+id/img4"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/meili"
+            makeramen:border_color="@android:color/transparent"
+            makeramen:border_width="1dip"
+            makeramen:corner_radius="100dip" />
+
+        <TextView
+            android:id="@+id/apl44"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/img4"
+            android:text="特色位置获得100次点赞"
+            android:textColor="#404040"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/setting_array" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="#4fbfbfbf" />
+    </RelativeLayout>
+      <RelativeLayout
+        android:id="@+id/fs5"
+        android:layout_width="fill_parent"
+        android:layout_height="65dp"
+        android:background="@drawable/layout_selector"
+        android:clickable="true" >
+
+        <com.makeramen.RoundedImageView
+            android:id="@+id/img5"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/meili"
+            makeramen:border_color="@android:color/transparent"
+            makeramen:border_width="1dip"
+            makeramen:corner_radius="100dip" />
+
+        <TextView
+            android:id="@+id/apl55"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/img5"
+            android:text="记录10km路程"
+            android:textColor="#404040"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/setting_array" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="#4fbfbfbf" />
+    </RelativeLayout>
+
+</LinearLayout>

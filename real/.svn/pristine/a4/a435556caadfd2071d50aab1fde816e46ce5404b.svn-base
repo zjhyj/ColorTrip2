@@ -1,0 +1,21 @@
+package com.whut.myMap.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.whut.myMap.R;
+import com.whut.myMap.domain.jifenshop;
+
+
+public class JifenUtils {
+     public static List<jifenshop> getGoods(){
+    	 List<jifenshop> mList=new ArrayList<jifenshop>();
+    	 mList.add(new jifenshop(1, 10, 30,R.drawable.advertisement3,1500,"桂林"));
+    	 mList.add(new jifenshop(2,30,100,R.drawable.shoes1,332,"登山鞋"));
+    	 mList.add(new jifenshop(3, 50, 200,R.drawable.advertisement6,1139,"苏州"));
+    	 mList.add(new jifenshop(4,100,500,R.drawable.bag1,449,"登山包"));
+    	 mList.add(new jifenshop(5, 200, 1000,R.drawable.advertisement5,2200,"三亚"));
+    	 mList.add(new jifenshop(6, 500, 2000,R.drawable.advertisement1,2000,"香格里拉"));
+    	 return mList;
+     }
+}

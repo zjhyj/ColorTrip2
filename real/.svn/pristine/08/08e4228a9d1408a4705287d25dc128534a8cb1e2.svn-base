@@ -1,0 +1,48 @@
+package com.whut.myMap.entites;
+
+import java.io.Serializable;
+
+public class cluster implements Serializable {
+private int cluster_id;
+private double cx;
+private double cy;
+private int iscontain;
+public int getCluster_id() {
+	return cluster_id;
+}
+public void setCluster_id(int cluster_id) {
+	this.cluster_id = cluster_id;
+}
+
+
+public double getCx() {
+	return cx;
+}
+public void setCx(double cx) {
+	this.cx = cx;
+}
+public double getCy() {
+	return cy;
+}
+public void setCy(double cy) {
+	this.cy = cy;
+}
+public int getIscontain() {
+	return iscontain;
+}
+public void setIscontain(int iscontain) {
+	this.iscontain = iscontain;
+}
+public cluster(int cluster_id, double cx, double cy, int iscontain) {
+	super();
+	this.cluster_id = cluster_id;
+	this.cx = cx;
+	this.cy = cy;
+	this.iscontain = iscontain;
+}
+public cluster() {
+	super();
+	// TODO Auto-generated constructor stub
+}
+
+}

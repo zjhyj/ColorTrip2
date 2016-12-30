@@ -1,0 +1,54 @@
+package com.whut.net;
+
+import java.util.Map;
+
+import com.whut.myMap.entites.url;
+import com.whut.myMap.utils.httpclient;
+
+public class deleteUtilNet {
+	public   String  deleteComment(Map<String, String> param){
+		try {
+			httpclient httpclient=new httpclient();
+			return httpclient.sendPost(new url().geturl()+"/servlet/deleteComment",param);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		
+	}
+	public String deleteShoucang(Map<String, String> param) {
+		// TODO Auto-generated method stub
+		try {
+			httpclient httpclient=new httpclient();
+			return httpclient.sendPost(new url().geturl()+"/servlet/deleteShoucang",param);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}		
+	}
+	
+	public String deleteReds(Map<String, String> param) {
+		// TODO Auto-generated method stub
+		try {
+			httpclient httpclient=new httpclient();
+			return httpclient.sendPost(new url().geturl()+"/servlet/deleteredsource",param);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}		
+	}
+	public String deleteTrack(Map<String, String> param) {
+		// TODO Auto-generated method stub
+		try {
+			httpclient httpclient=new httpclient();
+			return httpclient.sendPost(new url().geturl()+"/servlet/deletetrack",param);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}		
+	}
+}

@@ -1,0 +1,104 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.mymap.Redslocation" >
+<com.baidu.mapapi.map.MapView
+    android:id="@+id/bmapView"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:clickable="true" >
+</com.baidu.mapapi.map.MapView>
+<LinearLayout
+    android:id="@+id/markerinfo"
+    android:layout_width="fill_parent"
+    android:layout_height="250dp"
+    android:layout_alignParentBottom="true"
+    android:background="#CCFFFFFF"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:visibility="gone">
+     <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="210dp"
+        >
+    <ImageView
+        android:id="@+id/info_img"
+        android:layout_width="fill_parent"
+        android:layout_height="210dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:alpha="1.0"
+        android:clickable="true"
+        android:scaleType="fitXY" />
+   <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@id/info_img"
+        >
+            <TextView
+                android:id="@+id/info_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="false"
+                android:text="老米家泡馍小炒"
+                android:layout_marginLeft="5dp"
+                android:textSize="20sp"
+                android:textColor="#CC000000" />
+            <TextView
+                android:id="@+id/info_zan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="fill"
+                 android:layout_marginRight="5dp"
+                  android:layout_alignParentRight="true"
+                android:text="652"
+                android:textColor="#CC000000" />
+            <ImageView
+                android:id="@+id/zan"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:onClick="zan" 
+               android:layout_toLeftOf="@id/info_zan"
+                android:background="@drawable/icon_details_collect_selected"
+                android:scaleType="centerInside"
+                />
+    </RelativeLayout>    
+      </RelativeLayout> 
+        <Button
+            android:id="@+id/but"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/_xiangqing"
+            android:background="@drawable/normal_button" />
+  </LinearLayout>
+
+<ImageButton
+    android:id="@+id/red"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentRight="true"
+    android:layout_marginTop="5dp"
+    android:layout_marginRight="8dp"
+    android:scaleType="fitXY"
+    android:background="@drawable/map_btn"
+    android:src="@drawable/ic_track_explore_loc_focus" />
+<ImageButton
+    android:id="@+id/dingwei"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/red"
+    android:layout_alignRight="@id/red"
+    android:layout_marginTop="5dp"
+    android:scaleType="fitXY"
+    android:background="@drawable/map_btn"
+    android:src="@drawable/red1" />
+</RelativeLayout>

@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ScrollView
+        android:id="@+id/ScrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="170dp" >
+
+        <TableRow
+            android:id="@+id/TableRowContent"
+            android:layout_width="fill_parent"
+            android:layout_height="250dp"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/edittext"
+                android:layout_width="fill_parent"
+                android:layout_height="160dp"
+                android:layout_span="500"
+                android:gravity="top"
+                android:textSize="18sp" >
+            </EditText>
+        </TableRow>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ScrollView1"
+        android:orientation="vertical" >
+
+        <GridView
+            android:id="@+id/noScrollgridview"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:layout_marginLeft="5dp"
+            android:horizontalSpacing="2dp"
+            android:numColumns="3"
+            android:scrollbars="none"
+            android:verticalSpacing="2dp" >
+        </GridView>
+    </LinearLayout>
+
+</RelativeLayout>

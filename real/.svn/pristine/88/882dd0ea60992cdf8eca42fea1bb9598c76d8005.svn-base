@@ -1,0 +1,133 @@
+package com.whut.myMap;
+
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.whut.myMap.adapter.Route_Main_ListviewAdapter;
+import com.whut.myMap.adapter.ScollListView;
+import com.whut.myMap.adapter.SpeakGridViewAdapter;
+import com.whut.myMap.adapter.CommentListViewAdapter_my.ViewHolder;
+import com.whut.myMap.adapter.Route_Base_ListviewAdapter;
+import com.whut.myMap.adapter.SpeakGridView;
+import com.whut.myMap.domain.comment_message;
+import com.whut.myMap.domain.trackbean;
+import com.whut.myMap.entites.lbs;
+import com.whut.myMap.entites.url;
+
+import android.R.integer;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
+
+/**
+ * list为评论列表 其余从上级传 坐标不知道
+ * 
+ * @author xxr
+ *
+ */
+public class Speak_Main_route extends Activity {
+	private trackbean trackbean;
+	private ImageView imageHead;
+	private TextView name;
+	private TextView content;
+	private ScollListView mListView;
+	private Route_Base_ListviewAdapter mAdapter;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.speak_route);
+		Intent intent = getIntent();
+		Bundle bundle = intent.getExtras();
+		trackbean = (com.whut.myMap.domain.trackbean) bundle.getSerializable("speak_item1");
+		imageHead = (ImageView) findViewById(R.id.head);
+		name = (TextView) findViewById(R.id.username);
+		content = (TextView) findViewById(R.id.text);
+		ImageView titleImg = (ImageView) findViewById(R.id.toppic);
+		SharedPreferences userPreferences = getSharedPreferences("userInfo", 0);
+		String image = userPreferences.getString(url.SPUSER_IMAGE, "");
+		String n = userPreferences.getString(url.SPUSER_NAME, "");
+		if (image != null) {
+			DisplayImageOptions options = new DisplayImageOptions.Builder()//
+					.showImageOnLoading(R.drawable.ic_launcher) // 加载中显示的默认图片
+					.showImageOnFail(R.drawable.ic_launcher) // 设置加载失败的默认图片
+					.cacheInMemory(true) // 内存缓存
+					.cacheOnDisk(true) // sdcard缓存
+					.bitmapConfig(Config.RGB_565)// 设置最低配置
+					.build();//
+			ImageLoader.getInstance().displayImage(image, imageHead, options);
+		} else {
+			imageHead.setImageResource(R.drawable.default_head);
+		}
+		name.setText(n);
+			content.setText(trackbean.getTrack().getWords());
+		if(trackbean.getTrack().getBgurl()!=null&&trackbean.getTrack().getBgurl().length()>0){
+		
+			Bitmap bm = BitmapFactory.decodeFile(trackbean.getTrack().getBgurl());
+			titleImg.setImageBitmap(bm);
+		}content.setText(trackbean.getTrack().getWords());
+		Bitmap bm = BitmapFactory.decodeFile(trackbean.getTrack().getBgurl());
+		mListView = (ScollListView) findViewById(R.id.ui_lv);
+		mAdapter = new Route_Base_ListviewAdapter(getApplication(), trackbean);
+		mListView.setAdapter(mAdapter);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getMenuInflater().inflate(R.menu.route_base, menu);
+		ActionBar mActionBar = getActionBar();
+		mActionBar.setTitle(R.string.speak_main);
+		mActionBar.setDisplayHomeAsUpEnabled(true);
+		mActionBar.setDisplayShowHomeEnabled(false);
+		return true;
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			this.overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+			return true;
+		case R.id.map:
+			Intent intent = new Intent(getApplication(), TrackshowNET.class);
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("speak_item", trackbean);
+			intent.putExtras(bundle);
+			startActivity(intent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+
+	}
+
+}

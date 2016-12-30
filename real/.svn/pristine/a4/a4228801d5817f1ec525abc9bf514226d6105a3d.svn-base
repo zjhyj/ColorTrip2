@@ -1,0 +1,73 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background"
+    android:paddingBottom="30dip" >
+  <TextView
+            android:id="@+id/la_btn_forget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:textColor="#ffffff"
+            android:clickable="true" 
+            android:text="忘记密码？"
+             />
+    <LinearLayout
+        android:id="@+id/al_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <CheckBox
+            android:id="@+id/la_cb_remerber_pwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="保存密码"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/la_btn_reg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="la_btn_reg_click"
+            android:text="注册"
+            android:textColor="@android:color/white" />
+
+      
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/la_btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/al_ll"
+        android:onClick="la_btn_login_click"
+        android:text="登录"
+        android:textColor="@android:color/white" />
+
+    <EditText
+        android:id="@+id/la_et_password"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/la_btn_login"
+        android:hint="请输入密码"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:textColor="#000000" />
+
+    <EditText
+        android:id="@+id/la_et_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/la_et_password"
+        android:hint="请输入手机号码"
+        android:inputType="phone"
+        android:singleLine="true"
+        android:textColor="#000000" />
+
+</RelativeLayout>
